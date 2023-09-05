@@ -10,6 +10,7 @@ namespace GPUUtil
     {
         public GraphicsBuffer Data => _buffer;
         public int Size => _buffer.count;
+        public int Stride => _buffer.stride;
         public int Bytes => _buffer.count * _buffer.stride;
 
         private GraphicsBuffer _buffer;
@@ -64,9 +65,12 @@ namespace GPUUtil
         public GPUBuffer<T> Read => _bufferRead;
         public GPUBuffer<T> Write => _bufferWrite;
         public int Size => _bufferRead.Size;
+        public int Stride => _bufferRead.Stride;
+        public int Bytes => _bufferRead.Bytes;
 
         private GPUBuffer<T> _bufferRead = new();
         private GPUBuffer<T> _bufferWrite = new();
+        private GPUComputeShader _copyCs;
         private bool _inited = false;
 
         public void Init(int size)
@@ -74,6 +78,7 @@ namespace GPUUtil
             Dispose();
             _bufferRead.Init(size);
             _bufferWrite.Init(size);
+            _copyCs = new GPUComputeShader("GPUUtil");
             _inited = true;
         }
 
@@ -95,6 +100,17 @@ namespace GPUUtil
         public void Swap()
         {
             (_bufferRead, _bufferWrite) = (_bufferWrite, _bufferRead);
+        }
+
+        public void CopyReadToWrite()
+        {
+            var cs = _copyCs;
+            var kernel = cs.FindKernel("CopyBuffer");
+            cs.SetInt("_BufferSize", Size);
+            cs.SetInt("_BufferBytes", Bytes);
+            kernel.SetBuffer("_BufferRead", _bufferRead);
+            kernel.SetBuffer("_BufferWrite", _bufferWrite);
+            kernel.Dispatch(Size);
         }
 
         public void SetData(T[] data)
