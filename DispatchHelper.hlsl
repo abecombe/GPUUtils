@@ -1,14 +1,35 @@
-#ifndef CS_DISPATCH_HELPER_HLSL
-#define CS_DISPATCH_HELPER_HLSL
+﻿#ifndef GPU_UTILS_DISPATCH_HELPER_HLSL
+#define GPU_UTILS_DISPATCH_HELPER_HLSL
 
-uint3 _NumThreads;
-uint3 _NumGroups;
+//#pragma multi_compile _ DIRECT_DISPATCH INDIRECT_DISPATCH
 
-#define RETURN_IF_INVALID(TID) if (any(TID >= _NumThreads)) return;
+#if !defined(DIRECT_DISPATCH) && !defined(INDIRECT_DISPATCH)
+#define DIRECT_DISPATCH
+#endif
 
-inline bool IsThreadValid(uint3 thread_id)
-{
-    return all(thread_id < _NumThreads);
-}
+// for direct dispatch
+#if defined(DIRECT_DISPATCH)
 
-#endif /* CS_DISPATCH_HELPER_HLSL */
+uint3 _DispatchThreadSize;
+#define RETURN_IF_INVALID_THREAD(TID)\
+const uint3 dispatch_thread_size = _DispatchThreadSize;\
+if (any(TID >= dispatch_thread_size)) return;\
+
+#define GET_DISPATCH_THREAD_SIZE()\
+_DispatchThreadSize\
+
+// for indirect dispatch
+#elif defined(INDIRECT_DISPATCH)
+
+StructuredBuffer<uint3> _DispatchThreadSizeBuffer;
+#define RETURN_IF_INVALID_THREAD(TID)\
+const uint3 dispatch_thread_size = _DispatchThreadSizeBuffer[0];\
+if (any(TID >= dispatch_thread_size)) return;\
+
+#define GET_DISPATCH_THREAD_SIZE()\
+_DispatchThreadSizeBuffer[0]\
+
+#endif
+
+
+#endif /* GPU_UTILS_DISPATCH_HELPER_HLSL */

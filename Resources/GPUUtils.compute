@@ -1,0 +1,60 @@
+﻿#pragma kernel CopyBuffer1
+#pragma kernel CopyBuffer32
+#pragma kernel CopyBuffer128
+#pragma kernel CopyBuffer1024
+#pragma kernel BuildDispatchIndirect
+
+uint3 _DispatchThreadSize;
+uint _BufferCopyCount;
+uint _BufferCopyUIntCount;
+uint _FromBufferUIntStartIndex;
+uint _ToBufferUIntStartIndex;
+StructuredBuffer<uint> _FromBuffer;
+RWStructuredBuffer<uint> _ToBuffer;
+
+[numthreads(1, 1, 1)]
+void CopyBuffer1()
+{
+    for (uint i = 0; i < _BufferCopyUIntCount; i += 1)
+        _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
+}
+[numthreads(32, 1, 1)]
+void CopyBuffer32(uint3 thread_id : SV_DispatchThreadID)
+{
+    if (any(thread_id >= _DispatchThreadSize)) return;
+
+    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
+}
+[numthreads(128, 1, 1)]
+void CopyBuffer128(uint3 thread_id : SV_DispatchThreadID)
+{
+    if (any(thread_id >= _DispatchThreadSize)) return;
+
+    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
+}
+[numthreads(1024, 1, 1)]
+void CopyBuffer1024(uint3 thread_id : SV_DispatchThreadID)
+{
+    if (any(thread_id >= _DispatchThreadSize)) return;
+
+    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
+}
+
+StructuredBuffer<uint> _CountBuffer;
+RWStructuredBuffer<uint> _DispatchIndirectArgsBuffer;
+RWStructuredBuffer<uint> _DispatchThreadSizeBuffer;
+uint _CountBufferOffset;
+uint _CountBufferSize;
+uint3 _ThreadGroupSize;
+
+[numthreads(3, 1, 1)]
+void BuildDispatchIndirect(uint thread_id : SV_DispatchThreadID)
+{
+    const uint desired_thread_size = thread_id < _CountBufferSize ? _CountBuffer[_CountBufferOffset + thread_id] : 1u;
+    const uint group_size = max(1u, (desired_thread_size + _ThreadGroupSize[thread_id] - 1u) / _ThreadGroupSize[thread_id]);
+    _DispatchThreadSizeBuffer[thread_id] = desired_thread_size;
+    _DispatchIndirectArgsBuffer[thread_id] = group_size;
+}
