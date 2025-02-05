@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -18,10 +19,18 @@ namespace Abecombe.GPUUtils
         {
             cs.SetBuffer(kernel, name, buffer.Data);
         }
-
         public static void SetGPUBuffer(this GPUKernel kernel, string name, IGPUBuffer buffer)
         {
             kernel.Cs.SetGPUBuffer(kernel, name, buffer);
+        }
+
+        public static void SetGPUBuffer(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, IGPUBuffer buffer)
+        {
+            cs.SetBuffer(cb, kernel, name, buffer.Data);
+        }
+        public static void SetGPUBuffer(this GPUKernel kernel, CommandBuffer cb, string name, IGPUBuffer buffer)
+        {
+            kernel.Cs.SetGPUBuffer(cb, kernel, name, buffer);
         }
     }
 }

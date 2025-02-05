@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -137,6 +138,10 @@ namespace Abecombe.GPUUtils
         {
             Read.CopyTo(Write);
         }
+        public void CopyFromReadToWrite(CommandBuffer cb)
+        {
+            Read.CopyTo(cb, Write);
+        }
 
         public void SetData(T[] data)
         {
@@ -146,6 +151,15 @@ namespace Abecombe.GPUUtils
         {
             Read.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
         }
+        public void SetData(CommandBuffer cb, T[] data)
+        {
+            Read.SetData(cb, data);
+        }
+        public void SetData(CommandBuffer cb, T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            Read.SetData(cb, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
+
         public void GetReadData(T[] data)
         {
             Read.GetData(data);
@@ -181,10 +195,27 @@ namespace Abecombe.GPUUtils
             cs.SetVector(propertyIDs[count++], (float3)0.5f - buffer.PositionOffset);
             cs.SetVector(propertyIDs[count++], -buffer.PositionOffset);
         }
-
         public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
         {
             kernel.Cs.SetGPUStructuredBuffer(kernel, name, buffer);
+        }
+
+        public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
+        {
+            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            int count = 0;
+            cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
+            cs.SetInt(cb, propertyIDs[count++], buffer.Length);
+            cs.SetInts(cb, propertyIDs[count++], buffer.Size);
+            cs.SetInts(cb, propertyIDs[count++], buffer.StartIndex);
+            cs.SetInts(cb, propertyIDs[count++], buffer.EndIndex);
+            cs.SetVector(cb, propertyIDs[count++], buffer.PositionOffset);
+            cs.SetVector(cb, propertyIDs[count++], (float3)0.5f - buffer.PositionOffset);
+            cs.SetVector(cb, propertyIDs[count++], -buffer.PositionOffset);
+        }
+        public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUStructuredBuffer<T> buffer)
+        {
+            kernel.Cs.SetGPUStructuredBuffer(cb, kernel, name, buffer);
         }
     }
 }

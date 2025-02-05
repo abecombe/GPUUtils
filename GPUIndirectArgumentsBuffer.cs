@@ -1,5 +1,6 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -54,6 +55,14 @@ namespace Abecombe.GPUUtils
         public void SetDataFromArgs(int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
         {
             SetData(Args, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
+        public void SetDataFromArgs(CommandBuffer cb)
+        {
+            SetData(cb, Args);
+        }
+        public void SetDataFromArgs(CommandBuffer cb, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            SetData(cb, Args, managedBufferStartIndex, graphicsBufferStartIndex, count);
         }
         public void GetDataToArgs()
         {
@@ -110,6 +119,40 @@ namespace Abecombe.GPUUtils
             Args[CountBufferOffset + 2] = count.z;
             SetDataFromArgs(CountBufferOffset, CountBufferOffset, CountBufferSize);
         }
+
+        public void SetCount(CommandBuffer cb, uint count)
+        {
+            if (CountBufferSize != 1)
+            {
+                Debug.LogWarning("CountBufferSize is not 1.");
+                return;
+            }
+            Args[CountBufferOffset] = count;
+            SetDataFromArgs(cb, CountBufferOffset, CountBufferOffset, CountBufferSize);
+        }
+        public void SetCount(CommandBuffer cb, uint2 count)
+        {
+            if (CountBufferSize != 2)
+            {
+                Debug.LogWarning("CountBufferSize is not 2.");
+                return;
+            }
+            Args[CountBufferOffset] = count.x;
+            Args[CountBufferOffset + 1] = count.y;
+            SetDataFromArgs(cb, CountBufferOffset, CountBufferOffset, CountBufferSize);
+        }
+        public void SetCount(CommandBuffer cb, uint3 count)
+        {
+            if (CountBufferSize != 3)
+            {
+                Debug.LogWarning("CountBufferSize is not 3.");
+                return;
+            }
+            Args[CountBufferOffset] = count.x;
+            Args[CountBufferOffset + 1] = count.y;
+            Args[CountBufferOffset + 2] = count.z;
+            SetDataFromArgs(cb, CountBufferOffset, CountBufferOffset, CountBufferSize);
+        }
     }
 
     public static class GPUIndirectArgumentsBufferExtensions
@@ -124,10 +167,22 @@ namespace Abecombe.GPUUtils
             cs.SetInt(propertyIDs[count++], buffer.CountBufferOffset);
             cs.SetInt(propertyIDs[count++], buffer.CountBufferSize);
         }
-
         public static void SetGPUIndirectArgumentsBuffer(this GPUKernel kernel, string name, GPUIndirectArgumentsBuffer buffer)
         {
             kernel.Cs.SetGPUIndirectArgumentsBuffer(kernel, name, buffer);
+        }
+
+        public static void SetGPUIndirectArgumentsBuffer(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUIndirectArgumentsBuffer buffer)
+        {
+            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            int count = 0;
+            cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
+            cs.SetInt(cb, propertyIDs[count++], buffer.CountBufferOffset);
+            cs.SetInt(cb, propertyIDs[count++], buffer.CountBufferSize);
+        }
+        public static void SetGPUIndirectArgumentsBuffer(this GPUKernel kernel, CommandBuffer cb, string name, GPUIndirectArgumentsBuffer buffer)
+        {
+            kernel.Cs.SetGPUIndirectArgumentsBuffer(cb, kernel, name, buffer);
         }
     }
 }

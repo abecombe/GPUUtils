@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -38,7 +39,15 @@ namespace Abecombe.GPUUtils
         }
         public void CopyCountTo(GPUBufferBase<uint> dest, int destOffset = 0)
         {
-            GraphicsBuffer.CopyCount(this, dest, destOffset * dest.Stride);
+            GraphicsBuffer.CopyCount(Data, dest, destOffset * dest.Stride);
+        }
+        public void UpdateCountBuffer(CommandBuffer cb)
+        {
+            cb.CopyCounterValue(Data, CountBuffer, 0);
+        }
+        public void CopyCountTo(CommandBuffer cb, GPUBufferBase<uint> dest, int destOffset = 0)
+        {
+            cb.CopyCounterValue(Data, dest, (uint)(destOffset * dest.Stride));
         }
 
         public void SetCounterValue(uint value)
@@ -48,6 +57,14 @@ namespace Abecombe.GPUUtils
         public void ResetCounter()
         {
             SetCounterValue(0);
+        }
+        public void SetCounterValue(CommandBuffer cb, uint value)
+        {
+            cb.SetBufferCounterValue(Data, value);
+        }
+        public void ResetCounter(CommandBuffer cb)
+        {
+            SetCounterValue(cb, 0);
         }
 
         public uint GetCounterValue()
@@ -66,6 +83,20 @@ namespace Abecombe.GPUUtils
             if (resetBuffer) buffer.ResetCounter();
             cs.SetBuffer(kernel, name, buffer);
         }
+        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        {
+            kernel.Cs.SetGPUAppendBuffer(kernel, name, buffer, resetBuffer);
+        }
+
+        public static void SetGPUAppendBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        {
+            if (resetBuffer) buffer.ResetCounter(cb);
+            cs.SetBuffer(cb, kernel, name, buffer);
+        }
+        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        {
+            kernel.Cs.SetGPUAppendBuffer(cb, kernel, name, buffer, resetBuffer);
+        }
 
         private static readonly string[] BufferConcatNames = { "", "CountBuffer" };
 
@@ -77,15 +108,22 @@ namespace Abecombe.GPUUtils
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
             cs.SetBuffer(kernel, propertyIDs[count++], buffer.CountBuffer);
         }
-
-        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
-        {
-            kernel.Cs.SetGPUAppendBuffer(kernel, name, buffer, resetBuffer);
-        }
-
         public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
         {
             kernel.Cs.SetGPUConsumeBuffer(kernel, name, buffer);
+        }
+
+        public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
+        {
+            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            int count = 0;
+            buffer.UpdateCountBuffer(cb);
+            cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
+            cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer.CountBuffer);
+        }
+        public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer)
+        {
+            kernel.Cs.SetGPUConsumeBuffer(cb, kernel, name, buffer);
         }
     }
 }

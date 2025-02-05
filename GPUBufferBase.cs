@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -14,7 +15,6 @@ namespace Abecombe.GPUUtils
         public int Bytes => Length * Stride;
 
         protected GPUComputeShader GPUUtilsCs;
-        protected const int MaxDispatchSize = 65535;
 
         public bool Inited = false;
 
@@ -42,6 +42,14 @@ namespace Abecombe.GPUUtils
         {
             Data.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
         }
+        public void SetData(CommandBuffer cb, T[] data)
+        {
+            cb.SetBufferData(Data, data);
+        }
+        public void SetData(CommandBuffer cb, T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            cb.SetBufferData(Data, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
         public void GetData(T[] data)
         {
             Data.GetData(data);
@@ -55,7 +63,7 @@ namespace Abecombe.GPUUtils
         {
             if (count == -1)
             {
-                if (this.Length != toBuffer.Length)
+                if (Length != toBuffer.Length)
                 {
                     Debug.LogError("Buffer length mismatch, please specify count");
                     return;
@@ -66,13 +74,13 @@ namespace Abecombe.GPUUtils
             {
                 case <= 0:
                     return;
-                case > 1024 * MaxDispatchSize:
+                case > 1024 * GPUConstants.MaxDispatchSize:
                     Debug.LogError("Buffer copy count exceeds maximum dispatch size");
                     return;
             }
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? "CopyBuffer1" : count <= 32 ? "CopyBuffer32" : count <= 128 * MaxDispatchSize ? "CopyBuffer128" : "CopyBuffer1024");
+            var kernel = cs.FindKernel(count == 1 ? "CopyBuffer1" : count <= 32 ? "CopyBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "CopyBuffer128" : "CopyBuffer1024");
 
             int uintScaling = Stride / sizeof(uint);
 
@@ -85,10 +93,48 @@ namespace Abecombe.GPUUtils
 
             kernel.DispatchDesired(count);
         }
-
         public void CopyFrom(GPUBufferBase<T> fromBuffer, int fromBufferStartIndex = 0, int toBufferStartIndex = 0, int count = -1)
         {
             fromBuffer.CopyTo(this, fromBufferStartIndex, toBufferStartIndex, count);
+        }
+
+        public void CopyTo(CommandBuffer cb, GPUBufferBase<T> toBuffer, int fromBufferStartIndex = 0, int toBufferStartIndex = 0, int count = -1)
+        {
+            if (count == -1)
+            {
+                if (Length != toBuffer.Length)
+                {
+                    Debug.LogError("Buffer length mismatch, please specify count");
+                    return;
+                }
+                count = Length;
+            }
+            switch (count)
+            {
+                case <= 0:
+                    return;
+                case > 1024 * GPUConstants.MaxDispatchSize:
+                    Debug.LogError("Buffer copy count exceeds maximum dispatch size");
+                    return;
+            }
+
+            var cs = GPUUtilsCs;
+            var kernel = cs.FindKernel(count == 1 ? "CopyBuffer1" : count <= 32 ? "CopyBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "CopyBuffer128" : "CopyBuffer1024");
+
+            int uintScaling = Stride / sizeof(uint);
+
+            cs.SetInt(cb, "_BufferCopyCount", count);
+            cs.SetInt(cb, "_BufferCopyUIntCount", count * uintScaling);
+            cs.SetInt(cb, "_FromBufferUIntStartIndex", fromBufferStartIndex * uintScaling);
+            cs.SetInt(cb, "_ToBufferUIntStartIndex", toBufferStartIndex * uintScaling);
+            kernel.SetBuffer(cb, "_FromBuffer", Data);
+            kernel.SetBuffer(cb, "_ToBuffer", toBuffer);
+
+            kernel.DispatchDesired(cb, count);
+        }
+        public void CopyFrom(CommandBuffer cb, GPUBufferBase<T> fromBuffer, int fromBufferStartIndex = 0, int toBufferStartIndex = 0, int count = -1)
+        {
+            fromBuffer.CopyTo(cb, this, fromBufferStartIndex, toBufferStartIndex, count);
         }
 
         public static implicit operator GraphicsBuffer(GPUBufferBase<T> buffer)

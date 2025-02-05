@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
@@ -41,6 +42,20 @@ namespace Abecombe.GPUUtils
 
             kernel.DispatchDesired(3);
         }
+        public void UpdateBuffer(CommandBuffer cb, uint3 threadGroupSize)
+        {
+            var cs = GPUUtilsCs;
+            var kernel = cs.FindKernel("BuildDispatchIndirect");
+
+            kernel.SetBuffer(cb, "_CountBuffer", CountBuffer);
+            kernel.SetBuffer(cb, "_DispatchIndirectArgsBuffer", this);
+            kernel.SetBuffer(cb, "_DispatchThreadSizeBuffer", DispatchThreadSizeBuffer);
+            cs.SetInt(cb, "_CountBufferOffset", CountBufferOffset);
+            cs.SetInt(cb, "_CountBufferSize", CountBufferSize);
+            cs.SetInts(cb, "_ThreadGroupSize", threadGroupSize);
+
+            kernel.DispatchDesired(cb, 3);
+        }
 
         public override void Dispose()
         {
@@ -65,6 +80,16 @@ namespace Abecombe.GPUUtils
             kernel.Cs.EnableKeyword("INDIRECT_DISPATCH");
             kernel.SetBuffer("_DispatchThreadSizeBuffer", argsBuffer.DispatchThreadSizeBuffer);
             kernel.Cs.DispatchIndirect(kernel, argsBuffer);
+        }
+
+        public static void DispatchIndirectDesired(this GPUKernel kernel, CommandBuffer cb, GPUDispatchIndirectArgsBuffer argsBuffer, bool updateBuffer = true)
+        {
+            if (updateBuffer) argsBuffer.UpdateBuffer(cb, kernel.ThreadGroupSizes);
+
+            kernel.Cs.DisableKeyword(cb, "DIRECT_DISPATCH");
+            kernel.Cs.EnableKeyword(cb, "INDIRECT_DISPATCH");
+            kernel.SetBuffer(cb, "_DispatchThreadSizeBuffer", argsBuffer.DispatchThreadSizeBuffer);
+            kernel.Cs.DispatchIndirect(cb, kernel, argsBuffer);
         }
     }
 }

@@ -19,27 +19,27 @@ void CopyBuffer1()
         _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
 }
 [numthreads(32, 1, 1)]
-void CopyBuffer32(uint3 thread_id : SV_DispatchThreadID)
+void CopyBuffer32(uint thread_id : SV_DispatchThreadID)
 {
-    if (any(thread_id >= _DispatchThreadSize)) return;
+    if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
         _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
 }
 [numthreads(128, 1, 1)]
-void CopyBuffer128(uint3 thread_id : SV_DispatchThreadID)
+void CopyBuffer128(uint thread_id : SV_DispatchThreadID)
 {
-    if (any(thread_id >= _DispatchThreadSize)) return;
+    if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
         _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
 }
 [numthreads(1024, 1, 1)]
-void CopyBuffer1024(uint3 thread_id : SV_DispatchThreadID)
+void CopyBuffer1024(uint thread_id : SV_DispatchThreadID)
 {
-    if (any(thread_id >= _DispatchThreadSize)) return;
+    if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id.x; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
         _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
 }
 
