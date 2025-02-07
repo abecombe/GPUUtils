@@ -60,10 +60,12 @@ namespace Abecombe.GPUUtils
         }
     }
 
-    public class GPUDoubleBuffer<T> : IDisposable
+    public class GPUDoubleStructuredBuffer<T> : IDisposable
     {
         public GPUStructuredBuffer<T> Read { get; protected set; } = new();
         public GPUStructuredBuffer<T> Write { get; protected set; } = new();
+        public GPUStructuredBuffer<T> Buffer1 => Read;
+        public GPUStructuredBuffer<T> Buffer2 => Write;
 
         public int Length => Read.Length;
         public int Stride => Read.Stride;
