@@ -2,6 +2,10 @@
 #pragma kernel CopyBuffer32
 #pragma kernel CopyBuffer128
 #pragma kernel CopyBuffer1024
+#pragma kernel SetZeroBuffer1
+#pragma kernel SetZeroBuffer32
+#pragma kernel SetZeroBuffer128
+#pragma kernel SetZeroBuffer1024
 #pragma kernel BuildDispatchIndirect
 
 uint3 _DispatchThreadSize;
@@ -11,6 +15,7 @@ uint _FromBufferUIntStartIndex;
 uint _ToBufferUIntStartIndex;
 StructuredBuffer<uint> _FromBuffer;
 RWStructuredBuffer<uint> _ToBuffer;
+RWStructuredBuffer<uint> _Buffer;
 
 [numthreads(1, 1, 1)]
 void CopyBuffer1()
@@ -41,6 +46,37 @@ void CopyBuffer1024(uint thread_id : SV_DispatchThreadID)
 
     for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
         _ToBuffer[i + _ToBufferUIntStartIndex] = _FromBuffer[i + _FromBufferUIntStartIndex];
+}
+
+[numthreads(1, 1, 1)]
+void SetZeroBuffer1()
+{
+    for (uint i = 0; i < _BufferCopyUIntCount; i += 1)
+        _Buffer[i] = 0;
+}
+[numthreads(32, 1, 1)]
+void SetZeroBuffer32(uint thread_id : SV_DispatchThreadID)
+{
+    if (thread_id >= _DispatchThreadSize.x) return;
+
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _Buffer[i] = 0;
+}
+[numthreads(128, 1, 1)]
+void SetZeroBuffer128(uint thread_id : SV_DispatchThreadID)
+{
+    if (thread_id >= _DispatchThreadSize.x) return;
+
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _Buffer[i] = 0;
+}
+[numthreads(1024, 1, 1)]
+void SetZeroBuffer1024(uint thread_id : SV_DispatchThreadID)
+{
+    if (thread_id >= _DispatchThreadSize.x) return;
+
+    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+        _Buffer[i] = 0;
 }
 
 StructuredBuffer<uint> _CountBuffer;

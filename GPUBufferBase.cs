@@ -137,6 +137,37 @@ namespace Abecombe.GPUUtils
             fromBuffer.CopyTo(cb, this, fromBufferStartIndex, toBufferStartIndex, count);
         }
 
+        public void SetZero()
+        {
+            var count = Length;
+
+            var cs = GPUUtilsCs;
+            var kernel = cs.FindKernel(count == 1 ? "SetZeroBuffer1" : count <= 32 ? "SetZeroBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "SetZeroBuffer128" : "SetZeroBuffer1024");
+
+            int uintScaling = Stride / sizeof(uint);
+
+            cs.SetInt("_BufferCopyCount", count);
+            cs.SetInt("_BufferCopyUIntCount", count * uintScaling);
+            kernel.SetBuffer("_Buffer", Data);
+
+            kernel.DispatchDesired(count);
+        }
+        public void SetZero(CommandBuffer cb)
+        {
+            var count = Length;
+
+            var cs = GPUUtilsCs;
+            var kernel = cs.FindKernel(count == 1 ? "SetZeroBuffer1" : count <= 32 ? "SetZeroBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "SetZeroBuffer128" : "SetZeroBuffer1024");
+
+            int uintScaling = Stride / sizeof(uint);
+
+            cs.SetInt(cb, "_BufferCopyCount", count);
+            cs.SetInt(cb, "_BufferCopyUIntCount", count * uintScaling);
+            kernel.SetBuffer(cb, "_Buffer", Data);
+
+            kernel.DispatchDesired(cb, count);
+        }
+
         public static implicit operator GraphicsBuffer(GPUBufferBase<T> buffer)
         {
             return buffer.Data;
