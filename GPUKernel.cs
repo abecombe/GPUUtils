@@ -486,8 +486,6 @@ namespace Abecombe.GPUUtils
         #region Dispatch
         public void DispatchDesired(int sizeX, int sizeY = 1, int sizeZ = 1)
         {
-            Cs.EnableKeyword("DIRECT_DISPATCH");
-            Cs.DisableKeyword("INDIRECT_DISPATCH");
             int groupSizeX = Mathf.Max(1, (sizeX + (int)ThreadGroupSizeX - 1) / (int)ThreadGroupSizeX);
             int groupSizeY = Mathf.Max(1, (sizeY + (int)ThreadGroupSizeY - 1) / (int)ThreadGroupSizeY);
             int groupSizeZ = Mathf.Max(1, (sizeZ + (int)ThreadGroupSizeZ - 1) / (int)ThreadGroupSizeZ);
@@ -510,8 +508,6 @@ namespace Abecombe.GPUUtils
 
         public void DispatchDesired(CommandBuffer cb, int sizeX, int sizeY = 1, int sizeZ = 1)
         {
-            Cs.EnableKeyword(cb, "DIRECT_DISPATCH");
-            Cs.DisableKeyword(cb, "INDIRECT_DISPATCH");
             int groupSizeX = Mathf.Max(1, (sizeX + (int)ThreadGroupSizeX - 1) / (int)ThreadGroupSizeX);
             int groupSizeY = Mathf.Max(1, (sizeY + (int)ThreadGroupSizeY - 1) / (int)ThreadGroupSizeY);
             int groupSizeZ = Mathf.Max(1, (sizeZ + (int)ThreadGroupSizeZ - 1) / (int)ThreadGroupSizeZ);

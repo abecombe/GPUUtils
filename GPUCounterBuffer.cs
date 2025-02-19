@@ -37,7 +37,7 @@ namespace Abecombe.GPUUtils
         }
         public void CopyCountTo(GPUBufferBase<uint> dest, int destOffset = 0)
         {
-            GraphicsBuffer.CopyCount(this, dest, destOffset * dest.Stride);
+            GraphicsBuffer.CopyCount(Data, dest, destOffset * dest.Stride);
         }
         public void UpdateCountBuffer(CommandBuffer cb)
         {
@@ -45,7 +45,7 @@ namespace Abecombe.GPUUtils
         }
         public void CopyCountTo(CommandBuffer cb, GPUBufferBase<uint> dest, int destOffset = 0)
         {
-            cb.CopyCounterValue(this, dest, (uint)(destOffset * dest.Stride));
+            cb.CopyCounterValue(Data, dest, (uint)(destOffset * dest.Stride));
         }
 
         public void SetCounterValue(uint value)

@@ -21,7 +21,7 @@ namespace Abecombe.GPUUtils
         {
             Dispose();
             InitBufferCs();
-            DispatchThreadSizeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, Marshal.SizeOf(typeof(uint3)));
+            DispatchThreadSizeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Raw, 1, Marshal.SizeOf(typeof(uint3)));
             CountBuffer = countBuffer;
             CountBufferOffset = countBufferOffset;
             CountBufferSize = math.clamp(countBufferSize, 1, 3);
@@ -34,8 +34,8 @@ namespace Abecombe.GPUUtils
             var kernel = cs.FindKernel("BuildDispatchIndirect");
 
             kernel.SetBuffer("_CountBuffer", CountBuffer);
-            kernel.SetBuffer("_DispatchIndirectArgsBuffer", this);
             kernel.SetBuffer("_DispatchThreadSizeBuffer", DispatchThreadSizeBuffer);
+            kernel.SetBuffer("_DispatchIndirectArgsBuffer", Data);
             cs.SetInt("_CountBufferOffset", CountBufferOffset);
             cs.SetInt("_CountBufferSize", CountBufferSize);
             cs.SetInts("_ThreadGroupSize", threadGroupSize);
@@ -48,8 +48,8 @@ namespace Abecombe.GPUUtils
             var kernel = cs.FindKernel("BuildDispatchIndirect");
 
             kernel.SetBuffer(cb, "_CountBuffer", CountBuffer);
-            kernel.SetBuffer(cb, "_DispatchIndirectArgsBuffer", this);
             kernel.SetBuffer(cb, "_DispatchThreadSizeBuffer", DispatchThreadSizeBuffer);
+            kernel.SetBuffer(cb, "_DispatchIndirectArgsBuffer", Data);
             cs.SetInt(cb, "_CountBufferOffset", CountBufferOffset);
             cs.SetInt(cb, "_CountBufferSize", CountBufferSize);
             cs.SetInts(cb, "_ThreadGroupSize", threadGroupSize);
@@ -76,8 +76,6 @@ namespace Abecombe.GPUUtils
         {
             if (updateBuffer) argsBuffer.UpdateBuffer(kernel.ThreadGroupSizes);
 
-            kernel.Cs.DisableKeyword("DIRECT_DISPATCH");
-            kernel.Cs.EnableKeyword("INDIRECT_DISPATCH");
             kernel.SetBuffer("_DispatchThreadSizeBuffer", argsBuffer.DispatchThreadSizeBuffer);
             kernel.Cs.DispatchIndirect(kernel, argsBuffer);
         }
@@ -86,8 +84,6 @@ namespace Abecombe.GPUUtils
         {
             if (updateBuffer) argsBuffer.UpdateBuffer(cb, kernel.ThreadGroupSizes);
 
-            kernel.Cs.DisableKeyword(cb, "DIRECT_DISPATCH");
-            kernel.Cs.EnableKeyword(cb, "INDIRECT_DISPATCH");
             kernel.SetBuffer(cb, "_DispatchThreadSizeBuffer", argsBuffer.DispatchThreadSizeBuffer);
             kernel.Cs.DispatchIndirect(cb, kernel, argsBuffer);
         }

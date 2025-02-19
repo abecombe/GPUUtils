@@ -696,19 +696,27 @@ namespace Abecombe.GPUUtils
         #region Dispatch
         public void Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
+            EnableKeyword("DIRECT_DISPATCH");
+            DisableKeyword("INDIRECT_DISPATCH");
             Data.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
+            EnableKeyword("DIRECT_DISPATCH");
+            DisableKeyword("INDIRECT_DISPATCH");
             Data.Dispatch(kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
 
         public void Dispatch(CommandBuffer cb, int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
+            EnableKeyword(cb, "DIRECT_DISPATCH");
+            DisableKeyword(cb, "INDIRECT_DISPATCH");
             cb.DispatchCompute(Data, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(CommandBuffer cb, GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
+            EnableKeyword(cb, "DIRECT_DISPATCH");
+            DisableKeyword(cb, "INDIRECT_DISPATCH");
             cb.DispatchCompute(Data, kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         #endregion
@@ -716,19 +724,27 @@ namespace Abecombe.GPUUtils
         #region DispatchIndirect
         public void DispatchIndirect(int kernelIndex, GraphicsBuffer argsBuffer)
         {
+            DisableKeyword("DIRECT_DISPATCH");
+            EnableKeyword("INDIRECT_DISPATCH");
             Data.DispatchIndirect(kernelIndex, argsBuffer);
         }
         public void DispatchIndirect(GPUKernel kernel, GraphicsBuffer argsBuffer)
         {
+            DisableKeyword("DIRECT_DISPATCH");
+            EnableKeyword("INDIRECT_DISPATCH");
             Data.DispatchIndirect(kernel.ID, argsBuffer);
         }
 
         public void DispatchIndirect(CommandBuffer cb, int kernelIndex, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
+            DisableKeyword(cb, "DIRECT_DISPATCH");
+            EnableKeyword(cb, "INDIRECT_DISPATCH");
             cb.DispatchCompute(Data, kernelIndex, argsBuffer, argsOffset);
         }
         public void DispatchIndirect(CommandBuffer cb, GPUKernel kernel, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
+            DisableKeyword(cb, "DIRECT_DISPATCH");
+            EnableKeyword(cb, "INDIRECT_DISPATCH");
             cb.DispatchCompute(Data, kernel.ID, argsBuffer, argsOffset);
         }
         #endregion
