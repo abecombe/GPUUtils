@@ -6,7 +6,7 @@ namespace Abecombe.GPUUtils
 {
     public class GPUIndirectArgumentsBuffer : GPUBufferBase<uint>
     {
-        public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.IndirectArguments;
+        public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.IndirectArguments | GraphicsBuffer.Target.Raw;
 
         public override int Length => Args.Length;
 

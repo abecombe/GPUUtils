@@ -61,6 +61,12 @@ namespace Abecombe.GPUUtils
 
         public void CopyTo(GPUBufferBase<T> toBuffer, int fromBufferStartIndex = 0, int toBufferStartIndex = 0, int count = -1)
         {
+            if (!BufferTarget.HasFlag(GraphicsBuffer.Target.Raw) || !toBuffer.BufferTarget.HasFlag(GraphicsBuffer.Target.Raw))
+            {
+                Debug.LogError("Copy kernel only supports Raw buffers, please use your own copy method");
+                return;
+            }
+
             if (count == -1)
             {
                 if (Length != toBuffer.Length)
@@ -100,6 +106,12 @@ namespace Abecombe.GPUUtils
 
         public void CopyTo(CommandBuffer cb, GPUBufferBase<T> toBuffer, int fromBufferStartIndex = 0, int toBufferStartIndex = 0, int count = -1)
         {
+            if (!BufferTarget.HasFlag(GraphicsBuffer.Target.Raw) || !toBuffer.BufferTarget.HasFlag(GraphicsBuffer.Target.Raw))
+            {
+                Debug.LogError("Copy kernel only supports Raw buffers, please use your own copy method");
+                return;
+            }
+
             if (count == -1)
             {
                 if (Length != toBuffer.Length)
@@ -137,32 +149,44 @@ namespace Abecombe.GPUUtils
             fromBuffer.CopyTo(cb, this, fromBufferStartIndex, toBufferStartIndex, count);
         }
 
-        public void SetZero()
+        public void Clear()
         {
+            if (!BufferTarget.HasFlag(GraphicsBuffer.Target.Raw))
+            {
+                Debug.LogError("Clear kernel only supports Raw buffers, please use your own clear method");
+                return;
+            }
+
             var count = Length;
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? "SetZeroBuffer1" : count <= 32 ? "SetZeroBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "SetZeroBuffer128" : "SetZeroBuffer1024");
+            var kernel = cs.FindKernel(count == 1 ? "ClearBuffer1" : count <= 32 ? "ClearBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "ClearBuffer128" : "ClearBuffer1024");
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt("_BufferCopyCount", count);
-            cs.SetInt("_BufferCopyUIntCount", count * uintScaling);
+            cs.SetInt("_BufferClearCount", count);
+            cs.SetInt("_BufferClearUIntCount", count * uintScaling);
             kernel.SetBuffer("_Buffer", Data);
 
             kernel.DispatchDesired(count);
         }
-        public void SetZero(CommandBuffer cb)
+        public void Clear(CommandBuffer cb)
         {
+            if (!BufferTarget.HasFlag(GraphicsBuffer.Target.Raw))
+            {
+                Debug.LogError("Clear kernel only supports Raw buffers, please use your own clear method");
+                return;
+            }
+
             var count = Length;
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? "SetZeroBuffer1" : count <= 32 ? "SetZeroBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "SetZeroBuffer128" : "SetZeroBuffer1024");
+            var kernel = cs.FindKernel(count == 1 ? "ClearBuffer1" : count <= 32 ? "ClearBuffer32" : count <= 128 * GPUConstants.MaxDispatchSize ? "ClearBuffer128" : "ClearBuffer1024");
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt(cb, "_BufferCopyCount", count);
-            cs.SetInt(cb, "_BufferCopyUIntCount", count * uintScaling);
+            cs.SetInt(cb, "_BufferClearCount", count);
+            cs.SetInt(cb, "_BufferClearUIntCount", count * uintScaling);
             kernel.SetBuffer(cb, "_Buffer", Data);
 
             kernel.DispatchDesired(cb, count);

@@ -687,9 +687,9 @@ namespace Abecombe.GPUUtils
         public void SetKeyword(CommandBuffer cb, string keyword, bool enabled)
         {
             if (enabled)
-                cb.EnableShaderKeyword(keyword);
+                EnableKeyword(cb, keyword);
             else
-                cb.DisableShaderKeyword(keyword);
+                DisableKeyword(cb, keyword);
         }
         #endregion
 

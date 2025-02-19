@@ -491,6 +491,11 @@ namespace Abecombe.GPUUtils
             int groupSizeX = Mathf.Max(1, (sizeX + (int)ThreadGroupSizeX - 1) / (int)ThreadGroupSizeX);
             int groupSizeY = Mathf.Max(1, (sizeY + (int)ThreadGroupSizeY - 1) / (int)ThreadGroupSizeY);
             int groupSizeZ = Mathf.Max(1, (sizeZ + (int)ThreadGroupSizeZ - 1) / (int)ThreadGroupSizeZ);
+            if (groupSizeX > GPUConstants.MaxDispatchSize || groupSizeY > GPUConstants.MaxDispatchSize || groupSizeZ > GPUConstants.MaxDispatchSize)
+            {
+                Debug.LogError("Dispatch size exceeds maximum dispatch size");
+                return;
+            }
             Cs.SetInts("_DispatchThreadSize", sizeX, sizeY, sizeZ);
             Cs.Dispatch(this, groupSizeX, groupSizeY, groupSizeZ);
         }
@@ -510,6 +515,11 @@ namespace Abecombe.GPUUtils
             int groupSizeX = Mathf.Max(1, (sizeX + (int)ThreadGroupSizeX - 1) / (int)ThreadGroupSizeX);
             int groupSizeY = Mathf.Max(1, (sizeY + (int)ThreadGroupSizeY - 1) / (int)ThreadGroupSizeY);
             int groupSizeZ = Mathf.Max(1, (sizeZ + (int)ThreadGroupSizeZ - 1) / (int)ThreadGroupSizeZ);
+            if (groupSizeX > GPUConstants.MaxDispatchSize || groupSizeY > GPUConstants.MaxDispatchSize || groupSizeZ > GPUConstants.MaxDispatchSize)
+            {
+                Debug.LogError("Dispatch size exceeds maximum dispatch size");
+                return;
+            }
             Cs.SetInts(cb, "_DispatchThreadSize", sizeX, sizeY, sizeZ);
             Cs.Dispatch(cb, this, groupSizeX, groupSizeY, groupSizeZ);
         }

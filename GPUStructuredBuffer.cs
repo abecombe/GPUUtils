@@ -7,7 +7,7 @@ namespace Abecombe.GPUUtils
 {
     public class GPUStructuredBuffer<T> : GPUBufferBase<T>
     {
-        public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.Structured;
+        public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Raw;
 
         public override int Length => Size.x * Size.y * Size.z;
         public int3 Size { get; protected set; }
@@ -66,6 +66,9 @@ namespace Abecombe.GPUUtils
         public GPUStructuredBuffer<T> Write { get; protected set; } = new();
         public GPUStructuredBuffer<T> Buffer1 => Read;
         public GPUStructuredBuffer<T> Buffer2 => Write;
+        // for AsyncCompute
+        public GPUStructuredBuffer<T> SimulationBuffer => GPUStaticValues.SimulationUseBuffer1 ? Buffer1 : Buffer2;
+        public GPUStructuredBuffer<T> RenderingBuffer => GPUStaticValues.RenderingUseBuffer1 ? Buffer1 : Buffer2;
 
         public int Length => Read.Length;
         public int Stride => Read.Stride;
