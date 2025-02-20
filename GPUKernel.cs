@@ -482,7 +482,7 @@ namespace Abecombe.GPUUtils
                 Debug.LogError("Dispatch size exceeds maximum dispatch size");
                 return;
             }
-            Cs.SetInts("_DispatchThreadSize", sizeX, sizeY, sizeZ);
+            Cs.SetInts(GPUStaticValues.DispatchThreadSizeShaderPropertyID, sizeX, sizeY, sizeZ);
             Cs.Dispatch(this, groupSizeX, groupSizeY, groupSizeZ);
         }
         public void DispatchDesired(int2 size)
@@ -504,7 +504,7 @@ namespace Abecombe.GPUUtils
                 Debug.LogError("Dispatch size exceeds maximum dispatch size");
                 return;
             }
-            Cs.SetInts(cb, "_DispatchThreadSize", sizeX, sizeY, sizeZ);
+            Cs.SetInts(cb, GPUStaticValues.DispatchThreadSizeShaderPropertyID, sizeX, sizeY, sizeZ);
             Cs.Dispatch(cb, this, groupSizeX, groupSizeY, groupSizeZ);
         }
         public void DispatchDesired(CommandBuffer cb, int2 size)

@@ -21,13 +21,13 @@ _DispatchThreadSize\
 // for indirect dispatch
 #elif defined(INDIRECT_DISPATCH)
 
-StructuredBuffer<uint3> _DispatchThreadSizeBuffer;
+ByteAddressBuffer _DispatchThreadSizeBuffer;
 #define RETURN_IF_INVALID_THREAD(TID)\
-const uint3 dispatch_thread_size = _DispatchThreadSizeBuffer[0];\
+const uint3 dispatch_thread_size = _DispatchThreadSizeBuffer.Load3(0);\
 if (any(TID >= dispatch_thread_size)) return;\
 
 #define GET_DISPATCH_THREAD_SIZE()\
-_DispatchThreadSizeBuffer[0]\
+_DispatchThreadSizeBuffer.Load3(0)\
 
 #endif
 

@@ -157,11 +157,9 @@ namespace Abecombe.GPUUtils
 
     public static class GPUIndirectArgumentsBufferExtensions
     {
-        private static readonly string[] BufferConcatNames = { "", "CountBufferOffset", "CountBufferSize" };
-
         public static void SetGPUIndirectArgumentsBuffer(this GPUComputeShader cs, GPUKernel kernel, string name, GPUIndirectArgumentsBuffer buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.IndirectArgumentsBufferConcatNames);
             int count = 0;
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
             cs.SetInt(propertyIDs[count++], buffer.CountBufferOffset);
@@ -174,7 +172,7 @@ namespace Abecombe.GPUUtils
 
         public static void SetGPUIndirectArgumentsBuffer(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUIndirectArgumentsBuffer buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.IndirectArgumentsBufferConcatNames);
             int count = 0;
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
             cs.SetInt(cb, propertyIDs[count++], buffer.CountBufferOffset);

@@ -185,11 +185,9 @@ namespace Abecombe.GPUUtils
 
     public static class GPUStructuredBufferExtensions
     {
-        private static readonly string[] BufferConcatNames = { "", "Length", "Size", "StartIndex", "EndIndex", "IndexToPosition", "PositionToIndex", "PositionToFloorIndex" };
-
         public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.StructuredBufferConcatNames);
             int count = 0;
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
             cs.SetInt(propertyIDs[count++], buffer.Length);
@@ -207,7 +205,7 @@ namespace Abecombe.GPUUtils
 
         public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, BufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.StructuredBufferConcatNames);
             int count = 0;
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
             cs.SetInt(cb, propertyIDs[count++], buffer.Length);

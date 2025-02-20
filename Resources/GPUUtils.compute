@@ -10,21 +10,18 @@
 
 uint3 _DispatchThreadSize;
 
-uint _BufferCopyCount;
-uint _BufferCopyUIntCount;
+uint _BufferCount;
+uint _BufferUIntCount;
 uint _FromBufferUIntStartIndex;
 uint _ToBufferUIntStartIndex;
 ByteAddressBuffer _FromBuffer;
 RWByteAddressBuffer _ToBuffer;
-
-uint _BufferClearCount;
-uint _BufferClearUIntCount;
 RWByteAddressBuffer _Buffer;
 
 [numthreads(1, 1, 1)]
 void CopyBuffer1()
 {
-    for (uint i = 0; i < _BufferCopyUIntCount; i += 1)
+    for (uint i = 0; i < _BufferUIntCount; i += 1)
         _ToBuffer.Store(0, _FromBuffer.Load(0));
 }
 [numthreads(32, 1, 1)]
@@ -32,7 +29,7 @@ void CopyBuffer32(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _ToBuffer.Store(4u * (i + _ToBufferUIntStartIndex), _FromBuffer.Load(4u * (i + _FromBufferUIntStartIndex)));
 }
 [numthreads(128, 1, 1)]
@@ -40,7 +37,7 @@ void CopyBuffer128(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _ToBuffer.Store(4u * (i + _ToBufferUIntStartIndex), _FromBuffer.Load(4u * (i + _FromBufferUIntStartIndex)));
 }
 [numthreads(1024, 1, 1)]
@@ -48,14 +45,14 @@ void CopyBuffer1024(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferCopyUIntCount; i += _BufferCopyCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _ToBuffer.Store(4u * (i + _ToBufferUIntStartIndex), _FromBuffer.Load(4u * (i + _FromBufferUIntStartIndex)));
 }
 
 [numthreads(1, 1, 1)]
 void ClearBuffer1()
 {
-    for (uint i = 0; i < _BufferClearUIntCount; i += 1)
+    for (uint i = 0; i < _BufferUIntCount; i += 1)
         _Buffer.Store(0, 0);
 }
 [numthreads(32, 1, 1)]
@@ -63,7 +60,7 @@ void ClearBuffer32(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferClearUIntCount; i += _BufferClearCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _Buffer.Store(4u * i, 0);
 }
 [numthreads(128, 1, 1)]
@@ -71,7 +68,7 @@ void ClearBuffer128(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferClearUIntCount; i += _BufferClearCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _Buffer.Store(4u * i, 0);
 }
 [numthreads(1024, 1, 1)]
@@ -79,7 +76,7 @@ void ClearBuffer1024(uint thread_id : SV_DispatchThreadID)
 {
     if (thread_id >= _DispatchThreadSize.x) return;
 
-    for (uint i = thread_id; i < _BufferClearUIntCount; i += _BufferClearCount)
+    for (uint i = thread_id; i < _BufferUIntCount; i += _BufferCount)
         _Buffer.Store(4u * i, 0);
 }
 

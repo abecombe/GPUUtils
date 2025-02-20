@@ -678,13 +678,10 @@ namespace Abecombe.GPUUtils
         #endregion
 
         #region Dispatch
-        private const string DirectDispatch = "DIRECT_DISPATCH";
-        private const string IndirectDispatch = "INDIRECT_DISPATCH";
-
         public void Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(DirectDispatch);
-            DisableKeyword(IndirectDispatch);
+            EnableKeyword(GPUStaticValues.DirectDispatch);
+            DisableKeyword(GPUStaticValues.IndirectDispatch);
             Data.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
@@ -694,8 +691,8 @@ namespace Abecombe.GPUUtils
 
         public void Dispatch(CommandBuffer cb, int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(cb, DirectDispatch);
-            DisableKeyword(cb, IndirectDispatch);
+            EnableKeyword(cb, GPUStaticValues.DirectDispatch);
+            DisableKeyword(cb, GPUStaticValues.IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(CommandBuffer cb, GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
@@ -707,8 +704,8 @@ namespace Abecombe.GPUUtils
         #region DispatchIndirect
         public void DispatchIndirect(int kernelIndex, GraphicsBuffer argsBuffer)
         {
-            DisableKeyword(DirectDispatch);
-            EnableKeyword(IndirectDispatch);
+            DisableKeyword(GPUStaticValues.DirectDispatch);
+            EnableKeyword(GPUStaticValues.IndirectDispatch);
             Data.DispatchIndirect(kernelIndex, argsBuffer);
         }
         public void DispatchIndirect(GPUKernel kernel, GraphicsBuffer argsBuffer)
@@ -718,8 +715,8 @@ namespace Abecombe.GPUUtils
 
         public void DispatchIndirect(CommandBuffer cb, int kernelIndex, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
-            DisableKeyword(cb, DirectDispatch);
-            EnableKeyword(cb, IndirectDispatch);
+            DisableKeyword(cb, GPUStaticValues.DirectDispatch);
+            EnableKeyword(cb, GPUStaticValues.IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, argsBuffer, argsOffset);
         }
         public void DispatchIndirect(CommandBuffer cb, GPUKernel kernel, GraphicsBuffer argsBuffer, uint argsOffset = 0)
