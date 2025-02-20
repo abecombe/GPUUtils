@@ -68,7 +68,6 @@ namespace Abecombe.GPUUtils
         {
             Data.SetBool(id, value);
         }
-
         public void SetBool(string name, bool value)
         {
             Data.SetBool(name, value);
@@ -78,7 +77,6 @@ namespace Abecombe.GPUUtils
         {
             cb.SetComputeIntParam(Data, id, value ? 1 : 0);
         }
-
         public void SetBool(CommandBuffer cb, string name, bool value)
         {
             cb.SetComputeIntParam(Data, name, value ? 1 : 0);
@@ -94,7 +92,6 @@ namespace Abecombe.GPUUtils
         {
             Data.SetInt(id, (int)value);
         }
-
         public void SetInt(string name, int value)
         {
             Data.SetInt(name, value);
@@ -112,7 +109,6 @@ namespace Abecombe.GPUUtils
         {
             cb.SetComputeIntParam(Data, id, (int)value);
         }
-
         public void SetInt(CommandBuffer cb, string name, int value)
         {
             cb.SetComputeIntParam(Data, name, value);
@@ -185,7 +181,6 @@ namespace Abecombe.GPUUtils
         {
             SetInts(id, (int)value.x, (int)value.y, (int)value.z, (int)value.w);
         }
-
         private void SetInts(string name)
         {
             Data.SetInts(name, _intArr);
@@ -309,7 +304,6 @@ namespace Abecombe.GPUUtils
         {
             SetInts(cb, id, (int)value.x, (int)value.y, (int)value.z, (int)value.w);
         }
-
         private void SetInts(CommandBuffer cb, string name)
         {
             cb.SetComputeIntParams(Data, name, _intArr);
@@ -378,7 +372,6 @@ namespace Abecombe.GPUUtils
         {
             Data.SetFloat(id, value);
         }
-
         public void SetFloat(string name, float value)
         {
             Data.SetFloat(name, value);
@@ -388,7 +381,6 @@ namespace Abecombe.GPUUtils
         {
             cb.SetComputeFloatParam(Data, id, value);
         }
-
         public void SetFloat(CommandBuffer cb, string name, float value)
         {
             cb.SetComputeFloatParam(Data, name, value);
@@ -432,7 +424,6 @@ namespace Abecombe.GPUUtils
         {
             Data.SetVector(id, value);
         }
-
         public void SetVector(string name, float x, float y)
         {
             Data.SetVector(name, new Vector4(x, y));
@@ -506,7 +497,6 @@ namespace Abecombe.GPUUtils
         {
             cb.SetComputeVectorParam(Data, id, value);
         }
-
         public void SetVector(CommandBuffer cb, string name, float x, float y)
         {
             cb.SetComputeVectorParam(Data, name, new Vector4(x, y));
@@ -554,7 +544,6 @@ namespace Abecombe.GPUUtils
         {
             Data.SetMatrix(id, matrix);
         }
-
         public void SetMatrix(string name, Matrix4x4 matrix)
         {
             Data.SetMatrix(name, matrix);
@@ -572,7 +561,6 @@ namespace Abecombe.GPUUtils
         {
             cb.SetComputeMatrixParam(Data, id, matrix);
         }
-
         public void SetMatrix(CommandBuffer cb, string name, Matrix4x4 matrix)
         {
             cb.SetComputeMatrixParam(Data, name, matrix);
@@ -590,16 +578,15 @@ namespace Abecombe.GPUUtils
         }
         public void SetBuffer(GPUKernel kernel, int id, GraphicsBuffer buffer)
         {
-            Data.SetBuffer(kernel.ID, id, buffer);
+            SetBuffer(kernel.ID, id, buffer);
         }
-
         public void SetBuffer(int kernelIndex, string name, GraphicsBuffer buffer)
         {
             Data.SetBuffer(kernelIndex, name, buffer);
         }
         public void SetBuffer(GPUKernel kernel, string name, GraphicsBuffer buffer)
         {
-            Data.SetBuffer(kernel.ID, name, buffer);
+            SetBuffer(kernel.ID, name, buffer);
         }
 
         public void SetBuffer(CommandBuffer cb, int kernelIndex, int id, GraphicsBuffer buffer)
@@ -608,16 +595,15 @@ namespace Abecombe.GPUUtils
         }
         public void SetBuffer(CommandBuffer cb, GPUKernel kernel, int id, GraphicsBuffer buffer)
         {
-            cb.SetComputeBufferParam(Data, kernel.ID, id, buffer);
+            SetBuffer(cb, kernel.ID, id, buffer);
         }
-
         public void SetBuffer(CommandBuffer cb, int kernelIndex, string name, GraphicsBuffer buffer)
         {
             cb.SetComputeBufferParam(Data, kernelIndex, name, buffer);
         }
         public void SetBuffer(CommandBuffer cb, GPUKernel kernel, string name, GraphicsBuffer buffer)
         {
-            cb.SetComputeBufferParam(Data, kernel.ID, name, buffer);
+            SetBuffer(cb, kernel.ID, name, buffer);
         }
         #endregion
 
@@ -628,16 +614,15 @@ namespace Abecombe.GPUUtils
         }
         public void SetTexture(GPUKernel kernel, int id, Texture tex)
         {
-            Data.SetTexture(kernel.ID, id, tex);
+            SetTexture(kernel.ID, id, tex);
         }
-
         public void SetTexture(int kernelIndex, string name, Texture tex)
         {
             Data.SetTexture(kernelIndex, name, tex);
         }
         public void SetTexture(GPUKernel kernel, string name, Texture tex)
         {
-            Data.SetTexture(kernel.ID, name, tex);
+            SetTexture(kernel.ID, name, tex);
         }
 
         public void SetTexture(CommandBuffer cb, int kernelIndex, int id, Texture tex)
@@ -646,16 +631,15 @@ namespace Abecombe.GPUUtils
         }
         public void SetTexture(CommandBuffer cb, GPUKernel kernel, int id, Texture tex)
         {
-            cb.SetComputeTextureParam(Data, kernel.ID, id, tex);
+            SetTexture(cb, kernel.ID, id, tex);
         }
-
         public void SetTexture(CommandBuffer cb, int kernelIndex, string name, Texture tex)
         {
             cb.SetComputeTextureParam(Data, kernelIndex, name, tex);
         }
         public void SetTexture(CommandBuffer cb, GPUKernel kernel, string name, Texture tex)
         {
-            cb.SetComputeTextureParam(Data, kernel.ID, name, tex);
+            SetTexture(cb, kernel.ID, name, tex);
         }
         #endregion
 
@@ -671,9 +655,9 @@ namespace Abecombe.GPUUtils
         public void SetKeyword(string keyword, bool enabled)
         {
             if (enabled)
-                Data.EnableKeyword(keyword);
+                EnableKeyword(keyword);
             else
-                Data.DisableKeyword(keyword);
+                DisableKeyword(keyword);
         }
 
         public void EnableKeyword(CommandBuffer cb, string keyword)
@@ -694,58 +678,53 @@ namespace Abecombe.GPUUtils
         #endregion
 
         #region Dispatch
+        private const string DirectDispatch = "DIRECT_DISPATCH";
+        private const string IndirectDispatch = "INDIRECT_DISPATCH";
+
         public void Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword("DIRECT_DISPATCH");
-            DisableKeyword("INDIRECT_DISPATCH");
+            EnableKeyword(DirectDispatch);
+            DisableKeyword(IndirectDispatch);
             Data.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword("DIRECT_DISPATCH");
-            DisableKeyword("INDIRECT_DISPATCH");
-            Data.Dispatch(kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
+            Dispatch(kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
 
         public void Dispatch(CommandBuffer cb, int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(cb, "DIRECT_DISPATCH");
-            DisableKeyword(cb, "INDIRECT_DISPATCH");
+            EnableKeyword(cb, DirectDispatch);
+            DisableKeyword(cb, IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(CommandBuffer cb, GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(cb, "DIRECT_DISPATCH");
-            DisableKeyword(cb, "INDIRECT_DISPATCH");
-            cb.DispatchCompute(Data, kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
+            Dispatch(cb, kernel.ID, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         #endregion
 
         #region DispatchIndirect
         public void DispatchIndirect(int kernelIndex, GraphicsBuffer argsBuffer)
         {
-            DisableKeyword("DIRECT_DISPATCH");
-            EnableKeyword("INDIRECT_DISPATCH");
+            DisableKeyword(DirectDispatch);
+            EnableKeyword(IndirectDispatch);
             Data.DispatchIndirect(kernelIndex, argsBuffer);
         }
         public void DispatchIndirect(GPUKernel kernel, GraphicsBuffer argsBuffer)
         {
-            DisableKeyword("DIRECT_DISPATCH");
-            EnableKeyword("INDIRECT_DISPATCH");
-            Data.DispatchIndirect(kernel.ID, argsBuffer);
+            DispatchIndirect(kernel.ID, argsBuffer);
         }
 
         public void DispatchIndirect(CommandBuffer cb, int kernelIndex, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
-            DisableKeyword(cb, "DIRECT_DISPATCH");
-            EnableKeyword(cb, "INDIRECT_DISPATCH");
+            DisableKeyword(cb, DirectDispatch);
+            EnableKeyword(cb, IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, argsBuffer, argsOffset);
         }
         public void DispatchIndirect(CommandBuffer cb, GPUKernel kernel, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
-            DisableKeyword(cb, "DIRECT_DISPATCH");
-            EnableKeyword(cb, "INDIRECT_DISPATCH");
-            cb.DispatchCompute(Data, kernel.ID, argsBuffer, argsOffset);
+            DispatchIndirect(cb, kernel.ID, argsBuffer, argsOffset);
         }
         #endregion
     }

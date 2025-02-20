@@ -28,7 +28,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetBool(id, value);
         }
-
         public void SetBool(string name, bool value)
         {
             Cs.SetBool(name, value);
@@ -38,7 +37,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetBool(cb, id, value);
         }
-
         public void SetBool(CommandBuffer cb, string name, bool value)
         {
             Cs.SetBool(cb, name, value);
@@ -54,7 +52,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetInt(id, value);
         }
-
         public void SetInt(string name, int value)
         {
             Cs.SetInt(name, value);
@@ -72,7 +69,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetInt(cb, id, value);
         }
-
         public void SetInt(CommandBuffer cb, string name, int value)
         {
             Cs.SetInt(cb, name, value);
@@ -120,7 +116,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetInts(id, value);
         }
-
         public void SetInts(string name, int2 value)
         {
             Cs.SetInts(name, value);
@@ -194,7 +189,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetInts(cb, id, value);
         }
-
         public void SetInts(CommandBuffer cb, string name, int2 value)
         {
             Cs.SetInts(cb, name, value);
@@ -238,7 +232,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetFloat(id, value);
         }
-
         public void SetFloat(string name, float value)
         {
             Cs.SetFloat(name, value);
@@ -248,7 +241,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetFloat(cb, id, value);
         }
-
         public void SetFloat(CommandBuffer cb, string name, float value)
         {
             Cs.SetFloat(cb, name, value);
@@ -292,7 +284,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetVector(id, value);
         }
-
         public void SetVector(string name, float x, float y)
         {
             Cs.SetVector(name, x, y);
@@ -366,7 +357,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetVector(cb, id, value);
         }
-
         public void SetVector(CommandBuffer cb, string name, float x, float y)
         {
             Cs.SetVector(cb, name, x, y);
@@ -414,7 +404,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetMatrix(id, matrix);
         }
-
         public void SetMatrix(string name, Matrix4x4 matrix)
         {
             Cs.SetMatrix(name, matrix);
@@ -432,7 +421,6 @@ namespace Abecombe.GPUUtils
         {
             Cs.SetMatrix(cb, id, matrix);
         }
-
         public void SetMatrix(CommandBuffer cb, string name, Matrix4x4 matrix)
         {
             Cs.SetMatrix(cb, name, matrix);
