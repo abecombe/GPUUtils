@@ -607,6 +607,70 @@ namespace Abecombe.GPUUtils
         }
         #endregion
 
+        #region SetConstantBuffer
+        public void SetConstantBuffer(int id, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            if (buffer.target != GraphicsBuffer.Target.Constant)
+            {
+                Debug.LogError("Buffer is not a constant buffer");
+                return;
+            }
+            if (buffer.count != 1)
+            {
+                Debug.LogError("Constant Buffer should be a single element");
+                return;
+            }
+            size = size == -1 ? buffer.stride - offset : size;
+            Data.SetConstantBuffer(id, buffer, offset, size);
+        }
+        public void SetConstantBuffer(string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            if (buffer.target != GraphicsBuffer.Target.Constant)
+            {
+                Debug.LogError("Buffer is not a constant buffer");
+                return;
+            }
+            if (buffer.count != 1)
+            {
+                Debug.LogError("Constant Buffer should be a single element");
+                return;
+            }
+            size = size == -1 ? buffer.stride - offset : size;
+            Data.SetConstantBuffer(name, buffer, offset, size);
+        }
+
+        public void SetConstantBuffer(CommandBuffer cb, int id, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            if (buffer.target != GraphicsBuffer.Target.Constant)
+            {
+                Debug.LogError("Buffer is not a constant buffer");
+                return;
+            }
+            if (buffer.count != 1)
+            {
+                Debug.LogError("Constant Buffer should be a single element");
+                return;
+            }
+            size = size == -1 ? buffer.stride - offset : size;
+            cb.SetComputeConstantBufferParam(Data, id, buffer, offset, size);
+        }
+        public void SetConstantBuffer(CommandBuffer cb, string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            if (buffer.target != GraphicsBuffer.Target.Constant)
+            {
+                Debug.LogError("Buffer is not a constant buffer");
+                return;
+            }
+            if (buffer.count != 1)
+            {
+                Debug.LogError("Constant Buffer should be a single element");
+                return;
+            }
+            size = size == -1 ? buffer.stride - offset : size;
+            cb.SetComputeConstantBufferParam(Data, name, buffer, offset, size);
+        }
+        #endregion
+
         #region SetTexture
         public void SetTexture(int kernelIndex, int id, Texture tex)
         {

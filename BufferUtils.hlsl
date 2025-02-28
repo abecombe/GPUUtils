@@ -187,5 +187,9 @@ BUFFER.IncrementCounter()\
 #define DECREMENT_COUNTER(BUFFER)\
 BUFFER.DecrementCounter()\
 
+// GPUConstantBuffer
+#define CONSTANT_BUFFER(TYPE, BUFFER)\
+ConstantBuffer<TYPE> BUFFER;\
+
 
 #endif /* GPU_UTILS_BUFFER_UTILS_HLSL */

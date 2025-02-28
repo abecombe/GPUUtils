@@ -451,6 +451,26 @@ namespace Abecombe.GPUUtils
         }
         #endregion
 
+        #region SetConstantBuffer
+        public void SetConstantBuffer(int id, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            Cs.SetConstantBuffer(id, buffer, offset, size);
+        }
+        public void SetConstantBuffer(string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            Cs.SetConstantBuffer(name, buffer, offset, size);
+        }
+
+        public void SetConstantBuffer(CommandBuffer cb, int id, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            Cs.SetConstantBuffer(cb, id, buffer, offset, size);
+        }
+        public void SetConstantBuffer(CommandBuffer cb, string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
+        {
+            Cs.SetConstantBuffer(cb, name, buffer, offset, size);
+        }
+        #endregion
+
         #region SetTexture
         public void SetTexture(int id, Texture tex)
         {

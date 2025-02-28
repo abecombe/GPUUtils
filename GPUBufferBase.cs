@@ -16,7 +16,7 @@ namespace Abecombe.GPUUtils
 
         protected GPUComputeShader GPUUtilsCs;
 
-        public bool Inited = false;
+        public bool Inited { get; protected set; } = false;
 
         protected void InitBufferCs()
         {
