@@ -67,8 +67,8 @@ namespace Abecombe.GPUUtils
         public GPUStructuredBuffer<T> Buffer1 => Read;
         public GPUStructuredBuffer<T> Buffer2 => Write;
         // for AsyncCompute
-        public GPUStructuredBuffer<T> SimulationBuffer => GPUStaticValues.SimulationUseBuffer1 ? Buffer1 : Buffer2;
-        public GPUStructuredBuffer<T> RenderingBuffer => GPUStaticValues.RenderingUseBuffer1 ? Buffer1 : Buffer2;
+        public GPUStructuredBuffer<T> SimulationBuffer => GPUStatics.SimulationUseBuffer1 ? Buffer1 : Buffer2;
+        public GPUStructuredBuffer<T> RenderingBuffer => GPUStatics.RenderingUseBuffer1 ? Buffer1 : Buffer2;
 
         public int Length => Read.Length;
         public int Stride => Read.Stride;
@@ -187,7 +187,7 @@ namespace Abecombe.GPUUtils
     {
         public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.StructuredBufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.StructuredBufferConcatNames);
             int count = 0;
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
             cs.SetInt(propertyIDs[count++], buffer.Length);
@@ -205,7 +205,7 @@ namespace Abecombe.GPUUtils
 
         public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.StructuredBufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.StructuredBufferConcatNames);
             int count = 0;
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
             cs.SetInt(cb, propertyIDs[count++], buffer.Length);

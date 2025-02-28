@@ -100,7 +100,7 @@ namespace Abecombe.GPUUtils
 
         public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.AppendConsumeBufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.AppendConsumeBufferConcatNames);
             int count = 0;
             buffer.UpdateCountBuffer();
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
@@ -113,7 +113,7 @@ namespace Abecombe.GPUUtils
 
         public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
         {
-            var propertyIDs = cs.GetPropertyIDs(name, GPUStaticValues.AppendConsumeBufferConcatNames);
+            var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.AppendConsumeBufferConcatNames);
             int count = 0;
             buffer.UpdateCountBuffer(cb);
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);

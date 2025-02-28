@@ -31,28 +31,28 @@ namespace Abecombe.GPUUtils
         public void UpdateBuffer(uint3 threadGroupSize)
         {
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(GPUStaticValues.BuildDispatchIndirectKernelName);
+            var kernel = cs.FindKernel(GPUStatics.BuildDispatchIndirectKernelName);
 
-            kernel.SetBuffer(GPUStaticValues.CountBufferShaderPropertyID, CountBuffer);
-            kernel.SetBuffer(GPUStaticValues.DispatchThreadSizeBufferShaderPropertyID, DispatchThreadSizeBuffer);
-            kernel.SetBuffer(GPUStaticValues.DispatchIndirectArgsBufferShaderPropertyID, Data);
-            cs.SetInt(GPUStaticValues.CountBufferOffsetShaderPropertyID, CountBufferOffset);
-            cs.SetInt(GPUStaticValues.CountBufferSizeShaderPropertyID, CountBufferSize);
-            cs.SetInts(GPUStaticValues.ThreadGroupSizeShaderPropertyID, threadGroupSize);
+            kernel.SetBuffer(GPUStatics.CountBufferShaderPropertyID, CountBuffer);
+            kernel.SetBuffer(GPUStatics.DispatchThreadSizeBufferShaderPropertyID, DispatchThreadSizeBuffer);
+            kernel.SetBuffer(GPUStatics.DispatchIndirectArgsBufferShaderPropertyID, Data);
+            cs.SetInt(GPUStatics.CountBufferOffsetShaderPropertyID, CountBufferOffset);
+            cs.SetInt(GPUStatics.CountBufferSizeShaderPropertyID, CountBufferSize);
+            cs.SetInts(GPUStatics.ThreadGroupSizeShaderPropertyID, threadGroupSize);
 
             kernel.DispatchDesired(3);
         }
         public void UpdateBuffer(CommandBuffer cb, uint3 threadGroupSize)
         {
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(GPUStaticValues.BuildDispatchIndirectKernelName);
+            var kernel = cs.FindKernel(GPUStatics.BuildDispatchIndirectKernelName);
 
-            kernel.SetBuffer(cb, GPUStaticValues.CountBufferShaderPropertyID, CountBuffer);
-            kernel.SetBuffer(cb, GPUStaticValues.DispatchThreadSizeBufferShaderPropertyID, DispatchThreadSizeBuffer);
-            kernel.SetBuffer(cb, GPUStaticValues.DispatchIndirectArgsBufferShaderPropertyID, Data);
-            cs.SetInt(cb, GPUStaticValues.CountBufferOffsetShaderPropertyID, CountBufferOffset);
-            cs.SetInt(cb, GPUStaticValues.CountBufferSizeShaderPropertyID, CountBufferSize);
-            cs.SetInts(cb, GPUStaticValues.ThreadGroupSizeShaderPropertyID, threadGroupSize);
+            kernel.SetBuffer(cb, GPUStatics.CountBufferShaderPropertyID, CountBuffer);
+            kernel.SetBuffer(cb, GPUStatics.DispatchThreadSizeBufferShaderPropertyID, DispatchThreadSizeBuffer);
+            kernel.SetBuffer(cb, GPUStatics.DispatchIndirectArgsBufferShaderPropertyID, Data);
+            cs.SetInt(cb, GPUStatics.CountBufferOffsetShaderPropertyID, CountBufferOffset);
+            cs.SetInt(cb, GPUStatics.CountBufferSizeShaderPropertyID, CountBufferSize);
+            cs.SetInts(cb, GPUStatics.ThreadGroupSizeShaderPropertyID, threadGroupSize);
 
             kernel.DispatchDesired(cb, 3);
         }
@@ -76,7 +76,7 @@ namespace Abecombe.GPUUtils
         {
             if (updateBuffer) argsBuffer.UpdateBuffer(kernel.ThreadGroupSizes);
 
-            kernel.SetBuffer(GPUStaticValues.DispatchThreadSizeBufferShaderPropertyID, argsBuffer.DispatchThreadSizeBuffer);
+            kernel.SetBuffer(GPUStatics.DispatchThreadSizeBufferShaderPropertyID, argsBuffer.DispatchThreadSizeBuffer);
             kernel.Cs.DispatchIndirect(kernel, argsBuffer);
         }
 
@@ -84,7 +84,7 @@ namespace Abecombe.GPUUtils
         {
             if (updateBuffer) argsBuffer.UpdateBuffer(cb, kernel.ThreadGroupSizes);
 
-            kernel.SetBuffer(cb, GPUStaticValues.DispatchThreadSizeBufferShaderPropertyID, argsBuffer.DispatchThreadSizeBuffer);
+            kernel.SetBuffer(cb, GPUStatics.DispatchThreadSizeBufferShaderPropertyID, argsBuffer.DispatchThreadSizeBuffer);
             kernel.Cs.DispatchIndirect(cb, kernel, argsBuffer);
         }
     }

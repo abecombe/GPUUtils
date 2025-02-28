@@ -744,8 +744,8 @@ namespace Abecombe.GPUUtils
         #region Dispatch
         public void Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(GPUStaticValues.DirectDispatch);
-            DisableKeyword(GPUStaticValues.IndirectDispatch);
+            EnableKeyword(GPUStatics.DirectDispatch);
+            DisableKeyword(GPUStatics.IndirectDispatch);
             Data.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
@@ -755,8 +755,8 @@ namespace Abecombe.GPUUtils
 
         public void Dispatch(CommandBuffer cb, int kernelIndex, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
-            EnableKeyword(cb, GPUStaticValues.DirectDispatch);
-            DisableKeyword(cb, GPUStaticValues.IndirectDispatch);
+            EnableKeyword(cb, GPUStatics.DirectDispatch);
+            DisableKeyword(cb, GPUStatics.IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(CommandBuffer cb, GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
@@ -768,8 +768,8 @@ namespace Abecombe.GPUUtils
         #region DispatchIndirect
         public void DispatchIndirect(int kernelIndex, GraphicsBuffer argsBuffer)
         {
-            DisableKeyword(GPUStaticValues.DirectDispatch);
-            EnableKeyword(GPUStaticValues.IndirectDispatch);
+            DisableKeyword(GPUStatics.DirectDispatch);
+            EnableKeyword(GPUStatics.IndirectDispatch);
             Data.DispatchIndirect(kernelIndex, argsBuffer);
         }
         public void DispatchIndirect(GPUKernel kernel, GraphicsBuffer argsBuffer)
@@ -779,8 +779,8 @@ namespace Abecombe.GPUUtils
 
         public void DispatchIndirect(CommandBuffer cb, int kernelIndex, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {
-            DisableKeyword(cb, GPUStaticValues.DirectDispatch);
-            EnableKeyword(cb, GPUStaticValues.IndirectDispatch);
+            DisableKeyword(cb, GPUStatics.DirectDispatch);
+            EnableKeyword(cb, GPUStatics.IndirectDispatch);
             cb.DispatchCompute(Data, kernelIndex, argsBuffer, argsOffset);
         }
         public void DispatchIndirect(CommandBuffer cb, GPUKernel kernel, GraphicsBuffer argsBuffer, uint argsOffset = 0)

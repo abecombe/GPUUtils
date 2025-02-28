@@ -21,7 +21,7 @@ namespace Abecombe.GPUUtils
         protected void InitBufferCs()
         {
             Data = new GraphicsBuffer(BufferTarget, Length, Marshal.SizeOf(typeof(T)));
-            GPUUtilsCs = new GPUComputeShader(GPUStaticValues.UtilsShaderName);
+            GPUUtilsCs = new GPUComputeShader(GPUStatics.UtilsShaderName);
         }
 
         public virtual void Dispose()
@@ -86,16 +86,16 @@ namespace Abecombe.GPUUtils
             }
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? GPUStaticValues.CopyBuffer1KernelName : count <= 32 ? GPUStaticValues.CopyBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStaticValues.CopyBuffer128KernelName : GPUStaticValues.CopyBuffer1024KernelName);
+            var kernel = cs.FindKernel(count == 1 ? GPUStatics.CopyBuffer1KernelName : count <= 32 ? GPUStatics.CopyBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStatics.CopyBuffer128KernelName : GPUStatics.CopyBuffer1024KernelName);
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt(GPUStaticValues.BufferCountShaderPropertyID, count);
-            cs.SetInt(GPUStaticValues.BufferUIntCountShaderPropertyID, count * uintScaling);
-            cs.SetInt(GPUStaticValues.FromBufferUIntStartIndexShaderPropertyID, fromBufferStartIndex * uintScaling);
-            cs.SetInt(GPUStaticValues.ToBufferUIntStartIndexShaderPropertyID, toBufferStartIndex * uintScaling);
-            kernel.SetBuffer(GPUStaticValues.FromBufferShaderPropertyID, Data);
-            kernel.SetBuffer(GPUStaticValues.ToBufferShaderPropertyID, toBuffer);
+            cs.SetInt(GPUStatics.BufferCountShaderPropertyID, count);
+            cs.SetInt(GPUStatics.BufferUIntCountShaderPropertyID, count * uintScaling);
+            cs.SetInt(GPUStatics.FromBufferUIntStartIndexShaderPropertyID, fromBufferStartIndex * uintScaling);
+            cs.SetInt(GPUStatics.ToBufferUIntStartIndexShaderPropertyID, toBufferStartIndex * uintScaling);
+            kernel.SetBuffer(GPUStatics.FromBufferShaderPropertyID, Data);
+            kernel.SetBuffer(GPUStatics.ToBufferShaderPropertyID, toBuffer);
 
             kernel.DispatchDesired(count);
         }
@@ -131,16 +131,16 @@ namespace Abecombe.GPUUtils
             }
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? GPUStaticValues.CopyBuffer1KernelName : count <= 32 ? GPUStaticValues.CopyBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStaticValues.CopyBuffer128KernelName : GPUStaticValues.CopyBuffer1024KernelName);
+            var kernel = cs.FindKernel(count == 1 ? GPUStatics.CopyBuffer1KernelName : count <= 32 ? GPUStatics.CopyBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStatics.CopyBuffer128KernelName : GPUStatics.CopyBuffer1024KernelName);
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt(cb, GPUStaticValues.BufferCountShaderPropertyID, count);
-            cs.SetInt(cb, GPUStaticValues.BufferUIntCountShaderPropertyID, count * uintScaling);
-            cs.SetInt(cb, GPUStaticValues.FromBufferUIntStartIndexShaderPropertyID, fromBufferStartIndex * uintScaling);
-            cs.SetInt(cb, GPUStaticValues.ToBufferUIntStartIndexShaderPropertyID, toBufferStartIndex * uintScaling);
-            kernel.SetBuffer(cb, GPUStaticValues.FromBufferShaderPropertyID, Data);
-            kernel.SetBuffer(cb, GPUStaticValues.ToBufferShaderPropertyID, toBuffer);
+            cs.SetInt(cb, GPUStatics.BufferCountShaderPropertyID, count);
+            cs.SetInt(cb, GPUStatics.BufferUIntCountShaderPropertyID, count * uintScaling);
+            cs.SetInt(cb, GPUStatics.FromBufferUIntStartIndexShaderPropertyID, fromBufferStartIndex * uintScaling);
+            cs.SetInt(cb, GPUStatics.ToBufferUIntStartIndexShaderPropertyID, toBufferStartIndex * uintScaling);
+            kernel.SetBuffer(cb, GPUStatics.FromBufferShaderPropertyID, Data);
+            kernel.SetBuffer(cb, GPUStatics.ToBufferShaderPropertyID, toBuffer);
 
             kernel.DispatchDesired(cb, count);
         }
@@ -164,13 +164,13 @@ namespace Abecombe.GPUUtils
             var count = Length;
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? GPUStaticValues.ClearBuffer1KernelName : count <= 32 ? GPUStaticValues.ClearBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStaticValues.ClearBuffer128KernelName : GPUStaticValues.ClearBuffer1024KernelName);
+            var kernel = cs.FindKernel(count == 1 ? GPUStatics.ClearBuffer1KernelName : count <= 32 ? GPUStatics.ClearBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStatics.ClearBuffer128KernelName : GPUStatics.ClearBuffer1024KernelName);
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt(GPUStaticValues.BufferCountShaderPropertyID, count);
-            cs.SetInt(GPUStaticValues.BufferUIntCountShaderPropertyID, count * uintScaling);
-            kernel.SetBuffer(GPUStaticValues.BufferShaderPropertyID, Data);
+            cs.SetInt(GPUStatics.BufferCountShaderPropertyID, count);
+            cs.SetInt(GPUStatics.BufferUIntCountShaderPropertyID, count * uintScaling);
+            kernel.SetBuffer(GPUStatics.BufferShaderPropertyID, Data);
 
             kernel.DispatchDesired(count);
         }
@@ -189,13 +189,13 @@ namespace Abecombe.GPUUtils
             var count = Length;
 
             var cs = GPUUtilsCs;
-            var kernel = cs.FindKernel(count == 1 ? GPUStaticValues.ClearBuffer1KernelName : count <= 32 ? GPUStaticValues.ClearBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStaticValues.ClearBuffer128KernelName : GPUStaticValues.ClearBuffer1024KernelName);
+            var kernel = cs.FindKernel(count == 1 ? GPUStatics.ClearBuffer1KernelName : count <= 32 ? GPUStatics.ClearBuffer32KernelName : count <= 128 * GPUConstants.MaxDispatchSize ? GPUStatics.ClearBuffer128KernelName : GPUStatics.ClearBuffer1024KernelName);
 
             int uintScaling = Stride / sizeof(uint);
 
-            cs.SetInt(cb, GPUStaticValues.BufferCountShaderPropertyID, count);
-            cs.SetInt(cb, GPUStaticValues.BufferUIntCountShaderPropertyID, count * uintScaling);
-            kernel.SetBuffer(cb, GPUStaticValues.BufferShaderPropertyID, Data);
+            cs.SetInt(cb, GPUStatics.BufferCountShaderPropertyID, count);
+            cs.SetInt(cb, GPUStatics.BufferUIntCountShaderPropertyID, count * uintScaling);
+            kernel.SetBuffer(cb, GPUStatics.BufferShaderPropertyID, Data);
 
             kernel.DispatchDesired(cb, count);
         }
