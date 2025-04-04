@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 namespace Abecombe.GPUUtils
 {
     public class GPUAppendConsumeBuffer<T> : GPUBufferBase<T>
+        where T : struct
     {
         public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.Append;
 
@@ -78,27 +79,27 @@ namespace Abecombe.GPUUtils
 
     public static class GPUAppendConsumeBufferExtensions
     {
-        public static void SetGPUAppendBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        public static void SetGPUAppendBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false) where T : struct
         {
             if (resetBuffer) buffer.ResetCounter();
             cs.SetBuffer(kernel, name, buffer);
         }
-        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false) where T : struct
         {
             kernel.Cs.SetGPUAppendBuffer(kernel, name, buffer, resetBuffer);
         }
 
-        public static void SetGPUAppendBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        public static void SetGPUAppendBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false) where T : struct
         {
             if (resetBuffer) buffer.ResetCounter(cb);
             cs.SetBuffer(cb, kernel, name, buffer);
         }
-        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false)
+        public static void SetGPUAppendBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer, bool resetBuffer = false) where T : struct
         {
             kernel.Cs.SetGPUAppendBuffer(cb, kernel, name, buffer, resetBuffer);
         }
 
-        public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
+        public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer) where T : struct
         {
             var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.AppendConsumeBufferConcatNames);
             int count = 0;
@@ -106,12 +107,12 @@ namespace Abecombe.GPUUtils
             cs.SetBuffer(kernel, propertyIDs[count++], buffer);
             cs.SetBuffer(kernel, propertyIDs[count++], buffer.CountBuffer);
         }
-        public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
+        public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer) where T : struct
         {
             kernel.Cs.SetGPUConsumeBuffer(kernel, name, buffer);
         }
 
-        public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer)
+        public static void SetGPUConsumeBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUAppendConsumeBuffer<T> buffer) where T : struct
         {
             var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.AppendConsumeBufferConcatNames);
             int count = 0;
@@ -119,7 +120,7 @@ namespace Abecombe.GPUUtils
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer);
             cs.SetBuffer(cb, kernel, propertyIDs[count++], buffer.CountBuffer);
         }
-        public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer)
+        public static void SetGPUConsumeBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUAppendConsumeBuffer<T> buffer) where T : struct
         {
             kernel.Cs.SetGPUConsumeBuffer(cb, kernel, name, buffer);
         }

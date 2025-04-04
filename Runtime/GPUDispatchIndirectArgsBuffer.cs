@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -21,7 +22,15 @@ namespace Abecombe.GPUUtils
         {
             Dispose();
             InitBufferCs();
-            DispatchThreadSizeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Raw, 1, Marshal.SizeOf(typeof(uint3)));
+            using (var array = new NativeArray<uint>(new[] { 1u, 1u, 1u }, Allocator.Temp))
+            {
+                SetData(array);
+            }
+            DispatchThreadSizeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Raw, 3, Marshal.SizeOf(typeof(uint)));
+            using (var array = new NativeArray<uint>(new[] { 0u, 0u, 0u }, Allocator.Temp))
+            {
+                DispatchThreadSizeBuffer.SetData(array);
+            }
             CountBuffer = countBuffer;
             CountBufferOffset = countBufferOffset;
             CountBufferSize = math.clamp(countBufferSize, 1, 3);

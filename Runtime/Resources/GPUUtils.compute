@@ -22,7 +22,7 @@ RWByteAddressBuffer _Buffer;
 void CopyBuffer1()
 {
     for (uint i = 0; i < _BufferUIntCount; i += 1)
-        _ToBuffer.Store(0, _FromBuffer.Load(0));
+        _ToBuffer.Store(4u * (i + _ToBufferUIntStartIndex), _FromBuffer.Load(4u * (i + _FromBufferUIntStartIndex)));
 }
 [numthreads(32, 1, 1)]
 void CopyBuffer32(uint thread_id : SV_DispatchThreadID)
@@ -53,7 +53,7 @@ void CopyBuffer1024(uint thread_id : SV_DispatchThreadID)
 void ClearBuffer1()
 {
     for (uint i = 0; i < _BufferUIntCount; i += 1)
-        _Buffer.Store(0, 0);
+        _Buffer.Store(4u * i, 0);
 }
 [numthreads(32, 1, 1)]
 void ClearBuffer32(uint thread_id : SV_DispatchThreadID)

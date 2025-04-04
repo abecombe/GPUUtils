@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 namespace Abecombe.GPUUtils
 {
     public class GPUStructuredBuffer<T> : GPUBufferBase<T>
+        where T : struct
     {
         public override GraphicsBuffer.Target BufferTarget => GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Raw;
 
@@ -28,6 +29,7 @@ namespace Abecombe.GPUUtils
             Dispose();
             Size = size;
             InitBufferCs();
+            Clear();
             SetStartIndex(int3.zero);
             SetPositionOffset(new float3(0.5f, 0.5f, 0.5f));
             Inited = true;
@@ -61,6 +63,7 @@ namespace Abecombe.GPUUtils
     }
 
     public class GPUDoubleStructuredBuffer<T> : IDisposable
+        where T : struct
     {
         public GPUStructuredBuffer<T> Read { get; protected set; } = new();
         public GPUStructuredBuffer<T> Write { get; protected set; } = new();
@@ -147,45 +150,11 @@ namespace Abecombe.GPUUtils
         {
             Read.CopyTo(cb, Write);
         }
-
-        public void SetData(T[] data)
-        {
-            Read.SetData(data);
-        }
-        public void SetData(T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
-        {
-            Read.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
-        }
-        public void SetData(CommandBuffer cb, T[] data)
-        {
-            Read.SetData(cb, data);
-        }
-        public void SetData(CommandBuffer cb, T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
-        {
-            Read.SetData(cb, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
-        }
-
-        public void GetReadData(T[] data)
-        {
-            Read.GetData(data);
-        }
-        public void GetReadData(T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
-        {
-            Read.GetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
-        }
-        public void GetWriteData(T[] data)
-        {
-            Write.GetData(data);
-        }
-        public void GetWriteData(T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
-        {
-            Write.GetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
-        }
     }
 
     public static class GPUStructuredBufferExtensions
     {
-        public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
+        public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer) where T : struct
         {
             var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.StructuredBufferConcatNames);
             int count = 0;
@@ -198,12 +167,12 @@ namespace Abecombe.GPUUtils
             cs.SetVector(propertyIDs[count++], (float3)0.5f - buffer.PositionOffset);
             cs.SetVector(propertyIDs[count++], -buffer.PositionOffset);
         }
-        public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
+        public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer) where T : struct
         {
             kernel.Cs.SetGPUStructuredBuffer(kernel, name, buffer);
         }
 
-        public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer)
+        public static void SetGPUStructuredBuffer<T>(this GPUComputeShader cs, CommandBuffer cb, GPUKernel kernel, string name, GPUStructuredBuffer<T> buffer) where T : struct
         {
             var propertyIDs = cs.GetPropertyIDs(name, GPUStatics.StructuredBufferConcatNames);
             int count = 0;
@@ -216,7 +185,7 @@ namespace Abecombe.GPUUtils
             cs.SetVector(cb, propertyIDs[count++], (float3)0.5f - buffer.PositionOffset);
             cs.SetVector(cb, propertyIDs[count++], -buffer.PositionOffset);
         }
-        public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUStructuredBuffer<T> buffer)
+        public static void SetGPUStructuredBuffer<T>(this GPUKernel kernel, CommandBuffer cb, string name, GPUStructuredBuffer<T> buffer) where T : struct
         {
             kernel.Cs.SetGPUStructuredBuffer(cb, kernel, name, buffer);
         }

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
     public abstract class GPUBufferBase<T> : IGPUBuffer, IDisposable
+        where T : struct
     {
         public GraphicsBuffer Data { get; protected set; }
         public abstract GraphicsBuffer.Target BufferTarget { get; }
@@ -42,11 +45,43 @@ namespace Abecombe.GPUUtils
         {
             Data.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
         }
+        public void SetData(List<T> data)
+        {
+            Data.SetData(data);
+        }
+        public void SetData(List<T> data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            Data.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
+        public void SetData(NativeArray<T> data)
+        {
+            Data.SetData(data);
+        }
+        public void SetData(NativeArray<T> data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            Data.SetData(data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
         public void SetData(CommandBuffer cb, T[] data)
         {
             cb.SetBufferData(Data, data);
         }
         public void SetData(CommandBuffer cb, T[] data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            cb.SetBufferData(Data, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
+        public void SetData(CommandBuffer cb, List<T> data)
+        {
+            cb.SetBufferData(Data, data);
+        }
+        public void SetData(CommandBuffer cb, List<T> data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
+        {
+            cb.SetBufferData(Data, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
+        }
+        public void SetData(CommandBuffer cb, NativeArray<T> data)
+        {
+            cb.SetBufferData(Data, data);
+        }
+        public void SetData(CommandBuffer cb, NativeArray<T> data, int managedBufferStartIndex, int graphicsBufferStartIndex, int count)
         {
             cb.SetBufferData(Data, data, managedBufferStartIndex, graphicsBufferStartIndex, count);
         }
