@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Abecombe.GPUUtils
 {
+    [Serializable]
     public class GPUComputeShader
     {
-        public ComputeShader Data { get; }
+        [SerializeField]
+        private ComputeShader _cs;
+        public ComputeShader Cs => _cs;
 
         private Dictionary<int, GPUKernel> _kernels = new();
 
@@ -16,13 +20,25 @@ namespace Abecombe.GPUUtils
 
         private int[] _intArr = new int[4];
 
-        public GPUComputeShader(ComputeShader cs)
+        public void Init()
         {
-            Data = cs;
+            _kernels.Clear();
+            _propertyID.Clear();
+            _propertyIDs.Clear();
+            if (_cs == null)
+            {
+                Debug.LogError("Compute Shader is Null. Please set a Compute Shader to dispatch kernels.");
+            }
         }
-        public GPUComputeShader(string csName)
+        public void Init(ComputeShader cs)
         {
-            Data = Resources.Load<ComputeShader>(csName);
+            _cs = cs;
+            Init();
+        }
+        public void Init(string csName)
+        {
+            _cs = Resources.Load<ComputeShader>(csName);
+            Init();
         }
 
         public GPUKernel FindKernel(string name)
@@ -66,63 +82,63 @@ namespace Abecombe.GPUUtils
         #region SetBool
         public void SetBool(int id, bool value)
         {
-            Data.SetBool(id, value);
+            Cs.SetBool(id, value);
         }
         public void SetBool(string name, bool value)
         {
-            Data.SetBool(name, value);
+            Cs.SetBool(name, value);
         }
 
         public void SetBool(CommandBuffer cb, int id, bool value)
         {
-            cb.SetComputeIntParam(Data, id, value ? 1 : 0);
+            cb.SetComputeIntParam(Cs, id, value ? 1 : 0);
         }
         public void SetBool(CommandBuffer cb, string name, bool value)
         {
-            cb.SetComputeIntParam(Data, name, value ? 1 : 0);
+            cb.SetComputeIntParam(Cs, name, value ? 1 : 0);
         }
         #endregion
 
         #region SetInt
         public void SetInt(int id, int value)
         {
-            Data.SetInt(id, value);
+            Cs.SetInt(id, value);
         }
         public void SetInt(int id, uint value)
         {
-            Data.SetInt(id, (int)value);
+            Cs.SetInt(id, (int)value);
         }
         public void SetInt(string name, int value)
         {
-            Data.SetInt(name, value);
+            Cs.SetInt(name, value);
         }
         public void SetInt(string name, uint value)
         {
-            Data.SetInt(name, (int)value);
+            Cs.SetInt(name, (int)value);
         }
 
         public void SetInt(CommandBuffer cb, int id, int value)
         {
-            cb.SetComputeIntParam(Data, id, value);
+            cb.SetComputeIntParam(Cs, id, value);
         }
         public void SetInt(CommandBuffer cb, int id, uint value)
         {
-            cb.SetComputeIntParam(Data, id, (int)value);
+            cb.SetComputeIntParam(Cs, id, (int)value);
         }
         public void SetInt(CommandBuffer cb, string name, int value)
         {
-            cb.SetComputeIntParam(Data, name, value);
+            cb.SetComputeIntParam(Cs, name, value);
         }
         public void SetInt(CommandBuffer cb, string name, uint value)
         {
-            cb.SetComputeIntParam(Data, name, (int)value);
+            cb.SetComputeIntParam(Cs, name, (int)value);
         }
         #endregion
 
         #region SetInts
         private void SetInts(int id)
         {
-            Data.SetInts(id, _intArr);
+            Cs.SetInts(id, _intArr);
         }
         public void SetInts(int id, int x, int y)
         {
@@ -183,7 +199,7 @@ namespace Abecombe.GPUUtils
         }
         private void SetInts(string name)
         {
-            Data.SetInts(name, _intArr);
+            Cs.SetInts(name, _intArr);
         }
         public void SetInts(string name, int x, int y)
         {
@@ -245,7 +261,7 @@ namespace Abecombe.GPUUtils
 
         private void SetInts(CommandBuffer cb, int id)
         {
-            cb.SetComputeIntParams(Data, id, _intArr);
+            cb.SetComputeIntParams(Cs, id, _intArr);
         }
         public void SetInts(CommandBuffer cb, int id, int x, int y)
         {
@@ -306,7 +322,7 @@ namespace Abecombe.GPUUtils
         }
         private void SetInts(CommandBuffer cb, string name)
         {
-            cb.SetComputeIntParams(Data, name, _intArr);
+            cb.SetComputeIntParams(Cs, name, _intArr);
         }
         public void SetInts(CommandBuffer cb, string name, int x, int y)
         {
@@ -370,211 +386,211 @@ namespace Abecombe.GPUUtils
         #region SetFloat
         public void SetFloat(int id, float value)
         {
-            Data.SetFloat(id, value);
+            Cs.SetFloat(id, value);
         }
         public void SetFloat(string name, float value)
         {
-            Data.SetFloat(name, value);
+            Cs.SetFloat(name, value);
         }
 
         public void SetFloat(CommandBuffer cb, int id, float value)
         {
-            cb.SetComputeFloatParam(Data, id, value);
+            cb.SetComputeFloatParam(Cs, id, value);
         }
         public void SetFloat(CommandBuffer cb, string name, float value)
         {
-            cb.SetComputeFloatParam(Data, name, value);
+            cb.SetComputeFloatParam(Cs, name, value);
         }
         #endregion
 
         #region SetVector
         public void SetVector(int id, float x, float y)
         {
-            Data.SetVector(id, new Vector4(x, y));
+            Cs.SetVector(id, new Vector4(x, y));
         }
         public void SetVector(int id, float x, float y, float z)
         {
-            Data.SetVector(id, new Vector4(x, y, z));
+            Cs.SetVector(id, new Vector4(x, y, z));
         }
         public void SetVector(int id, float x, float y, float z, float w)
         {
-            Data.SetVector(id, new Vector4(x, y, z, w));
+            Cs.SetVector(id, new Vector4(x, y, z, w));
         }
         public void SetVector(int id, float2 value)
         {
-            Data.SetVector(id, new Vector4(value.x, value.y));
+            Cs.SetVector(id, new Vector4(value.x, value.y));
         }
         public void SetVector(int id, float3 value)
         {
-            Data.SetVector(id, new Vector4(value.x, value.y, value.z));
+            Cs.SetVector(id, new Vector4(value.x, value.y, value.z));
         }
         public void SetVector(int id, float4 value)
         {
-            Data.SetVector(id, new Vector4(value.x, value.y, value.z, value.w));
+            Cs.SetVector(id, new Vector4(value.x, value.y, value.z, value.w));
         }
         public void SetVector(int id, Vector2 value)
         {
-            Data.SetVector(id, value);
+            Cs.SetVector(id, value);
         }
         public void SetVector(int id, Vector3 value)
         {
-            Data.SetVector(id, value);
+            Cs.SetVector(id, value);
         }
         public void SetVector(int id, Vector4 value)
         {
-            Data.SetVector(id, value);
+            Cs.SetVector(id, value);
         }
         public void SetVector(string name, float x, float y)
         {
-            Data.SetVector(name, new Vector4(x, y));
+            Cs.SetVector(name, new Vector4(x, y));
         }
         public void SetVector(string name, float x, float y, float z)
         {
-            Data.SetVector(name, new Vector4(x, y, z));
+            Cs.SetVector(name, new Vector4(x, y, z));
         }
         public void SetVector(string name, float x, float y, float z, float w)
         {
-            Data.SetVector(name, new Vector4(x, y, z, w));
+            Cs.SetVector(name, new Vector4(x, y, z, w));
         }
         public void SetVector(string name, float2 value)
         {
-            Data.SetVector(name, new Vector4(value.x, value.y));
+            Cs.SetVector(name, new Vector4(value.x, value.y));
         }
         public void SetVector(string name, float3 value)
         {
-            Data.SetVector(name, new Vector4(value.x, value.y, value.z));
+            Cs.SetVector(name, new Vector4(value.x, value.y, value.z));
         }
         public void SetVector(string name, float4 value)
         {
-            Data.SetVector(name, new Vector4(value.x, value.y, value.z, value.w));
+            Cs.SetVector(name, new Vector4(value.x, value.y, value.z, value.w));
         }
         public void SetVector(string name, Vector2 value)
         {
-            Data.SetVector(name, value);
+            Cs.SetVector(name, value);
         }
         public void SetVector(string name, Vector3 value)
         {
-            Data.SetVector(name, value);
+            Cs.SetVector(name, value);
         }
         public void SetVector(string name, Vector4 value)
         {
-            Data.SetVector(name, value);
+            Cs.SetVector(name, value);
         }
 
         public void SetVector(CommandBuffer cb, int id, float x, float y)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(x, y));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(x, y));
         }
         public void SetVector(CommandBuffer cb, int id, float x, float y, float z)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(x, y, z));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(x, y, z));
         }
         public void SetVector(CommandBuffer cb, int id, float x, float y, float z, float w)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(x, y, z, w));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(x, y, z, w));
         }
         public void SetVector(CommandBuffer cb, int id, float2 value)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(value.x, value.y));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(value.x, value.y));
         }
         public void SetVector(CommandBuffer cb, int id, float3 value)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(value.x, value.y, value.z));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(value.x, value.y, value.z));
         }
         public void SetVector(CommandBuffer cb, int id, float4 value)
         {
-            cb.SetComputeVectorParam(Data, id, new Vector4(value.x, value.y, value.z, value.w));
+            cb.SetComputeVectorParam(Cs, id, new Vector4(value.x, value.y, value.z, value.w));
         }
         public void SetVector(CommandBuffer cb, int id, Vector2 value)
         {
-            cb.SetComputeVectorParam(Data, id, value);
+            cb.SetComputeVectorParam(Cs, id, value);
         }
         public void SetVector(CommandBuffer cb, int id, Vector3 value)
         {
-            cb.SetComputeVectorParam(Data, id, value);
+            cb.SetComputeVectorParam(Cs, id, value);
         }
         public void SetVector(CommandBuffer cb, int id, Vector4 value)
         {
-            cb.SetComputeVectorParam(Data, id, value);
+            cb.SetComputeVectorParam(Cs, id, value);
         }
         public void SetVector(CommandBuffer cb, string name, float x, float y)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(x, y));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(x, y));
         }
         public void SetVector(CommandBuffer cb, string name, float x, float y, float z)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(x, y, z));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(x, y, z));
         }
         public void SetVector(CommandBuffer cb, string name, float x, float y, float z, float w)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(x, y, z, w));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(x, y, z, w));
         }
         public void SetVector(CommandBuffer cb, string name, float2 value)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(value.x, value.y));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(value.x, value.y));
         }
         public void SetVector(CommandBuffer cb, string name, float3 value)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(value.x, value.y, value.z));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(value.x, value.y, value.z));
         }
         public void SetVector(CommandBuffer cb, string name, float4 value)
         {
-            cb.SetComputeVectorParam(Data, name, new Vector4(value.x, value.y, value.z, value.w));
+            cb.SetComputeVectorParam(Cs, name, new Vector4(value.x, value.y, value.z, value.w));
         }
         public void SetVector(CommandBuffer cb, string name, Vector2 value)
         {
-            cb.SetComputeVectorParam(Data, name, value);
+            cb.SetComputeVectorParam(Cs, name, value);
         }
         public void SetVector(CommandBuffer cb, string name, Vector3 value)
         {
-            cb.SetComputeVectorParam(Data, name, value);
+            cb.SetComputeVectorParam(Cs, name, value);
         }
         public void SetVector(CommandBuffer cb, string name, Vector4 value)
         {
-            cb.SetComputeVectorParam(Data, name, value);
+            cb.SetComputeVectorParam(Cs, name, value);
         }
         #endregion
 
         #region SetMatrix
         public void SetMatrix(int id, Matrix4x4 matrix)
         {
-            Data.SetMatrix(id, matrix);
+            Cs.SetMatrix(id, matrix);
         }
         public void SetMatrix(int id, float4x4 matrix)
         {
-            Data.SetMatrix(id, matrix);
+            Cs.SetMatrix(id, matrix);
         }
         public void SetMatrix(string name, Matrix4x4 matrix)
         {
-            Data.SetMatrix(name, matrix);
+            Cs.SetMatrix(name, matrix);
         }
         public void SetMatrix(string name, float4x4 matrix)
         {
-            Data.SetMatrix(name, matrix);
+            Cs.SetMatrix(name, matrix);
         }
 
         public void SetMatrix(CommandBuffer cb, int id, Matrix4x4 matrix)
         {
-            cb.SetComputeMatrixParam(Data, id, matrix);
+            cb.SetComputeMatrixParam(Cs, id, matrix);
         }
         public void SetMatrix(CommandBuffer cb, int id, float4x4 matrix)
         {
-            cb.SetComputeMatrixParam(Data, id, matrix);
+            cb.SetComputeMatrixParam(Cs, id, matrix);
         }
         public void SetMatrix(CommandBuffer cb, string name, Matrix4x4 matrix)
         {
-            cb.SetComputeMatrixParam(Data, name, matrix);
+            cb.SetComputeMatrixParam(Cs, name, matrix);
         }
         public void SetMatrix(CommandBuffer cb, string name, float4x4 matrix)
         {
-            cb.SetComputeMatrixParam(Data, name, matrix);
+            cb.SetComputeMatrixParam(Cs, name, matrix);
         }
         #endregion
 
         #region SetBuffer
         public void SetBuffer(int kernelIndex, int id, GraphicsBuffer buffer)
         {
-            Data.SetBuffer(kernelIndex, id, buffer);
+            Cs.SetBuffer(kernelIndex, id, buffer);
         }
         public void SetBuffer(GPUKernel kernel, int id, GraphicsBuffer buffer)
         {
@@ -582,7 +598,7 @@ namespace Abecombe.GPUUtils
         }
         public void SetBuffer(int kernelIndex, string name, GraphicsBuffer buffer)
         {
-            Data.SetBuffer(kernelIndex, name, buffer);
+            Cs.SetBuffer(kernelIndex, name, buffer);
         }
         public void SetBuffer(GPUKernel kernel, string name, GraphicsBuffer buffer)
         {
@@ -591,7 +607,7 @@ namespace Abecombe.GPUUtils
 
         public void SetBuffer(CommandBuffer cb, int kernelIndex, int id, GraphicsBuffer buffer)
         {
-            cb.SetComputeBufferParam(Data, kernelIndex, id, buffer);
+            cb.SetComputeBufferParam(Cs, kernelIndex, id, buffer);
         }
         public void SetBuffer(CommandBuffer cb, GPUKernel kernel, int id, GraphicsBuffer buffer)
         {
@@ -599,7 +615,7 @@ namespace Abecombe.GPUUtils
         }
         public void SetBuffer(CommandBuffer cb, int kernelIndex, string name, GraphicsBuffer buffer)
         {
-            cb.SetComputeBufferParam(Data, kernelIndex, name, buffer);
+            cb.SetComputeBufferParam(Cs, kernelIndex, name, buffer);
         }
         public void SetBuffer(CommandBuffer cb, GPUKernel kernel, string name, GraphicsBuffer buffer)
         {
@@ -621,7 +637,7 @@ namespace Abecombe.GPUUtils
                 return;
             }
             size = size == -1 ? buffer.stride - offset : size;
-            Data.SetConstantBuffer(id, buffer, offset, size);
+            Cs.SetConstantBuffer(id, buffer, offset, size);
         }
         public void SetConstantBuffer(string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
         {
@@ -636,7 +652,7 @@ namespace Abecombe.GPUUtils
                 return;
             }
             size = size == -1 ? buffer.stride - offset : size;
-            Data.SetConstantBuffer(name, buffer, offset, size);
+            Cs.SetConstantBuffer(name, buffer, offset, size);
         }
 
         public void SetConstantBuffer(CommandBuffer cb, int id, GraphicsBuffer buffer, int offset = 0, int size = -1)
@@ -652,7 +668,7 @@ namespace Abecombe.GPUUtils
                 return;
             }
             size = size == -1 ? buffer.stride - offset : size;
-            cb.SetComputeConstantBufferParam(Data, id, buffer, offset, size);
+            cb.SetComputeConstantBufferParam(Cs, id, buffer, offset, size);
         }
         public void SetConstantBuffer(CommandBuffer cb, string name, GraphicsBuffer buffer, int offset = 0, int size = -1)
         {
@@ -667,14 +683,14 @@ namespace Abecombe.GPUUtils
                 return;
             }
             size = size == -1 ? buffer.stride - offset : size;
-            cb.SetComputeConstantBufferParam(Data, name, buffer, offset, size);
+            cb.SetComputeConstantBufferParam(Cs, name, buffer, offset, size);
         }
         #endregion
 
         #region SetTexture
         public void SetTexture(int kernelIndex, int id, Texture tex)
         {
-            Data.SetTexture(kernelIndex, id, tex);
+            Cs.SetTexture(kernelIndex, id, tex);
         }
         public void SetTexture(GPUKernel kernel, int id, Texture tex)
         {
@@ -682,7 +698,7 @@ namespace Abecombe.GPUUtils
         }
         public void SetTexture(int kernelIndex, string name, Texture tex)
         {
-            Data.SetTexture(kernelIndex, name, tex);
+            Cs.SetTexture(kernelIndex, name, tex);
         }
         public void SetTexture(GPUKernel kernel, string name, Texture tex)
         {
@@ -691,7 +707,7 @@ namespace Abecombe.GPUUtils
 
         public void SetTexture(CommandBuffer cb, int kernelIndex, int id, Texture tex)
         {
-            cb.SetComputeTextureParam(Data, kernelIndex, id, tex);
+            cb.SetComputeTextureParam(Cs, kernelIndex, id, tex);
         }
         public void SetTexture(CommandBuffer cb, GPUKernel kernel, int id, Texture tex)
         {
@@ -699,7 +715,7 @@ namespace Abecombe.GPUUtils
         }
         public void SetTexture(CommandBuffer cb, int kernelIndex, string name, Texture tex)
         {
-            cb.SetComputeTextureParam(Data, kernelIndex, name, tex);
+            cb.SetComputeTextureParam(Cs, kernelIndex, name, tex);
         }
         public void SetTexture(CommandBuffer cb, GPUKernel kernel, string name, Texture tex)
         {
@@ -710,11 +726,11 @@ namespace Abecombe.GPUUtils
         #region SetKeyword
         public void EnableKeyword(string keyword)
         {
-            Data.EnableKeyword(keyword);
+            Cs.EnableKeyword(keyword);
         }
         public void DisableKeyword(string keyword)
         {
-            Data.DisableKeyword(keyword);
+            Cs.DisableKeyword(keyword);
         }
         public void SetKeyword(string keyword, bool enabled)
         {
@@ -746,7 +762,7 @@ namespace Abecombe.GPUUtils
         {
             EnableKeyword(GPUStatics.DirectDispatch);
             DisableKeyword(GPUStatics.IndirectDispatch);
-            Data.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
+            Cs.Dispatch(kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
@@ -757,7 +773,7 @@ namespace Abecombe.GPUUtils
         {
             EnableKeyword(cb, GPUStatics.DirectDispatch);
             DisableKeyword(cb, GPUStatics.IndirectDispatch);
-            cb.DispatchCompute(Data, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
+            cb.DispatchCompute(Cs, kernelIndex, threadGroupsX, threadGroupsY, threadGroupsZ);
         }
         public void Dispatch(CommandBuffer cb, GPUKernel kernel, int threadGroupsX, int threadGroupsY = 1, int threadGroupsZ = 1)
         {
@@ -770,7 +786,7 @@ namespace Abecombe.GPUUtils
         {
             DisableKeyword(GPUStatics.DirectDispatch);
             EnableKeyword(GPUStatics.IndirectDispatch);
-            Data.DispatchIndirect(kernelIndex, argsBuffer);
+            Cs.DispatchIndirect(kernelIndex, argsBuffer);
         }
         public void DispatchIndirect(GPUKernel kernel, GraphicsBuffer argsBuffer)
         {
@@ -781,7 +797,7 @@ namespace Abecombe.GPUUtils
         {
             DisableKeyword(cb, GPUStatics.DirectDispatch);
             EnableKeyword(cb, GPUStatics.IndirectDispatch);
-            cb.DispatchCompute(Data, kernelIndex, argsBuffer, argsOffset);
+            cb.DispatchCompute(Cs, kernelIndex, argsBuffer, argsOffset);
         }
         public void DispatchIndirect(CommandBuffer cb, GPUKernel kernel, GraphicsBuffer argsBuffer, uint argsOffset = 0)
         {

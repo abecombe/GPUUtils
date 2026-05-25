@@ -18,8 +18,8 @@ namespace Abecombe.GPUUtils
         {
             Cs = cs;
             Name = name;
-            ID = cs.Data.FindKernel(name);
-            cs.Data.GetKernelThreadGroupSizes(ID, out var threadGroupSizeX, out var threadGroupSizeY, out var threadGroupSizeZ);
+            ID = cs.Cs.FindKernel(name);
+            cs.Cs.GetKernelThreadGroupSizes(ID, out var threadGroupSizeX, out var threadGroupSizeY, out var threadGroupSizeZ);
             ThreadGroupSizes = new uint3(threadGroupSizeX, threadGroupSizeY, threadGroupSizeZ);
         }
 
