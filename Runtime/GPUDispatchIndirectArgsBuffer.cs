@@ -65,6 +65,20 @@ namespace Abecombe.GPUUtils
 
             kernel.DispatchDesired(cb, 3);
         }
+        public void UpdateBuffer(IComputeCommandBuffer cb, uint3 threadGroupSize)
+        {
+            var cs = GPUUtilsCs;
+            var kernel = cs.FindKernel(GPUStatics.BuildDispatchIndirectKernelName);
+
+            kernel.SetBuffer(cb, GPUStatics.CountBufferShaderPropertyID, CountBuffer);
+            kernel.SetBuffer(cb, GPUStatics.DispatchThreadSizeBufferShaderPropertyID, DispatchThreadSizeBuffer);
+            kernel.SetBuffer(cb, GPUStatics.DispatchIndirectArgsBufferShaderPropertyID, Data);
+            cs.SetInt(cb, GPUStatics.CountBufferOffsetShaderPropertyID, CountBufferOffset);
+            cs.SetInt(cb, GPUStatics.CountBufferSizeShaderPropertyID, CountBufferSize);
+            cs.SetInts(cb, GPUStatics.ThreadGroupSizeShaderPropertyID, threadGroupSize);
+
+            kernel.DispatchDesired(cb, 3);
+        }
 
         public override void Dispose()
         {
@@ -90,6 +104,14 @@ namespace Abecombe.GPUUtils
         }
 
         public static void DispatchIndirectDesired(this GPUKernel kernel, CommandBuffer cb, GPUDispatchIndirectArgsBuffer argsBuffer, bool updateBuffer = true)
+        {
+            if (updateBuffer) argsBuffer.UpdateBuffer(cb, kernel.ThreadGroupSizes);
+
+            kernel.SetBuffer(cb, GPUStatics.DispatchThreadSizeBufferShaderPropertyID, argsBuffer.DispatchThreadSizeBuffer);
+            kernel.Cs.DispatchIndirect(cb, kernel, argsBuffer);
+        }
+
+        public static void DispatchIndirectDesired(this GPUKernel kernel, IComputeCommandBuffer cb, GPUDispatchIndirectArgsBuffer argsBuffer, bool updateBuffer = true)
         {
             if (updateBuffer) argsBuffer.UpdateBuffer(cb, kernel.ThreadGroupSizes);
 
